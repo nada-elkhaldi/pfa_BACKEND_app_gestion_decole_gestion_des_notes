@@ -2,14 +2,20 @@ package com.example.mySpringProject.service;
 
 
 import com.example.mySpringProject.controller.PasswordGenerator;
+import com.example.mySpringProject.dto.GroupeDto;
+import com.example.mySpringProject.exception.ResourceNotFoundException;
 import com.example.mySpringProject.model.AuthenticationResponse;
 import com.example.mySpringProject.model.Email;
+import com.example.mySpringProject.model.Groupe;
 import com.example.mySpringProject.model.User;
 import com.example.mySpringProject.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 //import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AuthenticationService {
@@ -31,7 +37,7 @@ public class AuthenticationService {
         this.emailService = emailService;
     }
 
-    public AuthenticationResponse register(User request) {
+    public AuthenticationResponse createUser(User request) {
         User user = new User();
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
@@ -45,11 +51,10 @@ public class AuthenticationService {
         repository.save(user);
 
         String token = jwtService.generateToken(user);
-
         //envoyer l'e-mail d'authentification
         Email email = new Email();
         email.setRecipient(user.getEmail());
-        email.setSubject("Authentification réussie");
+        email.setSubject("Informations sur votre compte");
         email.setBody(
                 "Bonjour "+user.getRole()+ "\n" +
                 "Votre email est : " + user.getEmail() + "\n" +
@@ -68,5 +73,17 @@ public class AuthenticationService {
         User user = repository.findByEmail(request.getEmail()).orElseThrow();
         String token = jwtService.generateToken(user);
         return new AuthenticationResponse(token);
+    }
+
+    public User getUserById(Integer id) {
+        return repository.findById(id)
+                .orElseThrow(()-> new ResourceNotFoundException("User with id " + id + " not found"));
+
+    }
+
+    public List<User> getAllUsers() {
+        List<User> users = repository.findAll();
+        return users.stream().map((user)-> user).collect(Collectors.toList());
+
     }
 }
