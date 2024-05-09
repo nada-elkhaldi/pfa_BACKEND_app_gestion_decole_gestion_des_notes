@@ -9,6 +9,8 @@ import com.example.mySpringProject.service.EmailService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequestMapping(value = "/api/v1/utilisateurs", method = {RequestMethod.POST, RequestMethod.OPTIONS})
 @RestController
 
@@ -22,14 +24,13 @@ public class AuthenticationController {
         this.emailService = emailService;
     }
 
-    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+    @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(
-            @RequestBody User user) {
-        return ResponseEntity.ok(authenticationService.register(user));
+    public ResponseEntity<AuthenticationResponse> createUser (@RequestBody User user) {
+        return ResponseEntity.ok(authenticationService.createUser(user));
     }
 
-    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+    @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(
             @RequestBody User user) {
@@ -41,6 +42,17 @@ public class AuthenticationController {
         return emailService.sendMail(email);
     }
 
+@GetMapping("{id}")
+    public ResponseEntity<User> getUserById(@PathVariable("id") Integer id) {
+        return ResponseEntity.ok(authenticationService.getUserById(id));
+
+    }
+
+    @GetMapping
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> users = authenticationService.getAllUsers();
+        return  ResponseEntity.ok(users);
+    }
     }
 
 
