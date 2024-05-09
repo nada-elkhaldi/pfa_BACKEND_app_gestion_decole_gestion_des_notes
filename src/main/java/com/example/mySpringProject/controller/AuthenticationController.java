@@ -53,6 +53,8 @@ public class AuthenticationController {
         List<User> users = authenticationService.getAllUsers();
         return  ResponseEntity.ok(users);
     }
+
+    //test
     }
 
 
