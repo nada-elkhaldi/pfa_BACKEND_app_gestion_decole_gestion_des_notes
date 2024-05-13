@@ -9,6 +9,5 @@ public interface GroupeService {
     GroupeDto createGroupe(GroupeDto groupeDto);
     List<GroupeDto> getAllGroupes();
 
-    //test
 
 }

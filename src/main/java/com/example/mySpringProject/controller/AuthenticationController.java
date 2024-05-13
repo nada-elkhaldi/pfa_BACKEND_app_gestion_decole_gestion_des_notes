@@ -4,8 +4,8 @@ package com.example.mySpringProject.controller;
 import com.example.mySpringProject.model.AuthenticationResponse;
 import com.example.mySpringProject.model.Email;
 import com.example.mySpringProject.model.User;
-import com.example.mySpringProject.service.AuthenticationService;
-import com.example.mySpringProject.service.EmailService;
+import com.example.mySpringProject.service.impl.AuthenticationService;
+import com.example.mySpringProject.service.impl.EmailService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,8 +26,10 @@ public class AuthenticationController {
 
     @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> createUser (@RequestBody User user) {
-        return ResponseEntity.ok(authenticationService.createUser(user));
+    public ResponseEntity<AuthenticationResponse> createUser (@RequestBody  List<User> user) {
+
+        AuthenticationResponse response = authenticationService.createUser(user);
+        return ResponseEntity.ok(response);
     }
 
     @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
@@ -54,7 +56,19 @@ public class AuthenticationController {
         return  ResponseEntity.ok(users);
     }
 
-    //test commit
+    @PutMapping("{id}")
+     public ResponseEntity<User> updateUser(@PathVariable("id") Integer id, @RequestBody User updatedUser) {
+       User user= authenticationService.updateUser(id, updatedUser);
+       return ResponseEntity.ok(user);
+
+     }
+
+     @DeleteMapping("{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable("id") Integer id) {
+          authenticationService.deleteUser(id);
+         return ResponseEntity.ok("User deleted");
+
+    }
     }
 
 

@@ -1,10 +1,6 @@
 package com.example.mySpringProject.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,5 +20,20 @@ public class Groupe {
     }
 
     public Groupe() {
+    }
+
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "classe_id")
+    private Classe classe;
+
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "matiere_id")
+    private Matiere matiere;
+
+    public Groupe(Integer id, String groupName, Classe classe, Matiere matiere) {
+        this.id = id;
+        this.groupName = groupName;
+        this.classe = classe;
+        this.matiere = matiere;
     }
 }
