@@ -2,7 +2,7 @@ package com.example.mySpringProject.config;
 
 
 import com.example.mySpringProject.filter.JwtAuthenticationFilter;
-import com.example.mySpringProject.service.UserDetailsServiceImp;
+import com.example.mySpringProject.service.impl.UserDetailsServiceImp;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,7 +14,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.DefaultSecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationConverter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -36,7 +35,7 @@ public class SecurityConfig {
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
-                        req->req.requestMatchers("api/v1/**")
+                        req->req.requestMatchers("/api/v1/**")
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated()
@@ -45,7 +44,7 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
-        //test
+
 
     }
 
@@ -61,5 +60,5 @@ public class SecurityConfig {
         return configuration.getAuthenticationManager();
 
     }
-//test
+
 }

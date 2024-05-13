@@ -38,6 +38,15 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "classe_id")
+    private Classe classe;
+
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "matiere_id")
+    private Matiere matiere;
+
+
     public User(Integer id, String firstName, String lastName, String password, Role role) {
         this.id = id;
         this.firstName = firstName;

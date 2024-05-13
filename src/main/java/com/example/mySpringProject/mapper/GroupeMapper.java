@@ -11,7 +11,9 @@ public class GroupeMapper {
     public static GroupeDto mapToGroupDto(Groupe groupe) {
         return new GroupeDto(
                 groupe.getId(),
-                groupe.getGroupName()
+                groupe.getGroupName(),
+                groupe.getClasse(),
+                groupe.getMatiere()
         );
 
     }
@@ -19,7 +21,9 @@ public class GroupeMapper {
     public static Groupe mapToGroupe(GroupeDto groupeDto) {
         return new Groupe(
                groupeDto.getId(),
-                groupeDto.getGroupName()
+                groupeDto.getGroupName(),
+                groupeDto.getClasse(),
+                groupeDto.getMatiere()
         );
     }
 }

@@ -1,8 +1,8 @@
 package com.example.mySpringProject.filter;
 
 
-import com.example.mySpringProject.service.JwtService;
-import com.example.mySpringProject.service.UserDetailsServiceImp;
+import com.example.mySpringProject.service.impl.JwtService;
+import com.example.mySpringProject.service.impl.UserDetailsServiceImp;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
