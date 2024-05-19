@@ -18,7 +18,8 @@ public class MatiereMapper {
                 matiere.getEnseignants(),
                 matiere.getClasses(),
                 matiere.getGroupes(),
-                matiere.getSemestre()
+                matiere.getSemestre(),
+                matiere.getNotes()
         );
 
     }
@@ -31,7 +32,8 @@ public class MatiereMapper {
                 matiereDto.getEnseignants(),
                 matiereDto.getGroupes(),
                 matiereDto.getClasses(),
-                matiereDto.getSemestre()
+                matiereDto.getSemestre(),
+                matiereDto.getNotes()
 
         );
     }

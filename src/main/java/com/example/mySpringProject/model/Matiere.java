@@ -25,6 +25,9 @@ public class Matiere {
     @OneToMany(mappedBy = "matiere")
     private List<Classe> classes;
 
+    @OneToMany(mappedBy = "matiere")
+    private List<Note> notes;
+
     @ManyToOne(optional = true)
     @JoinColumn(name = "semestre_id")
     private Semestre semestre;
@@ -35,7 +38,9 @@ public class Matiere {
 
     }
 
-    public Matiere(Integer id, String code, String intitule, List<User> enseignants, List<Groupe> groupes, List<Classe> classes, Semestre semestre) {
+
+
+    public Matiere(Integer id, String code, String intitule, List<User> enseignants, List<Groupe> groupes, List<Classe> classes, Semestre semestre, List<Note> notes) {
         this.id = id;
         this.code = code;
         this.intitule = intitule;
@@ -43,5 +48,6 @@ public class Matiere {
         this.groupes = groupes;
         this.classes = classes;
         this.semestre = semestre;
+        this.notes = notes;
     }
 }

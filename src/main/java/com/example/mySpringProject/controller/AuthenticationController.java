@@ -1,11 +1,13 @@
 package com.example.mySpringProject.controller;
 
 
-import com.example.mySpringProject.model.AuthenticationResponse;
-import com.example.mySpringProject.model.Email;
-import com.example.mySpringProject.model.User;
+import com.example.mySpringProject.model.*;
+import com.example.mySpringProject.repository.ClasseRepository;
+import com.example.mySpringProject.repository.GroupeRepository;
+import com.example.mySpringProject.repository.UserRepository;
 import com.example.mySpringProject.service.impl.AuthenticationService;
 import com.example.mySpringProject.service.impl.EmailService;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,9 +36,10 @@ public class AuthenticationController {
 
     @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> login(
-            @RequestBody User user) {
-        return ResponseEntity.ok(authenticationService.authenticate(user));
+    public ResponseEntity<AuthenticationResponse> login(@RequestBody User user) {
+        AuthenticationResponse response = authenticationService.authenticate(user);
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/send")
@@ -55,6 +58,19 @@ public class AuthenticationController {
         List<User> users = authenticationService.getAllUsers();
         return  ResponseEntity.ok(users);
     }
+
+
+    @GetMapping("/etudiants")
+    public List<User> getAllEtudiants() {
+        return authenticationService.getAllEtudiants();
+    }
+
+    @GetMapping("/enseignants")
+    public List<User> getAllEnseignants() {
+        return authenticationService.getAllEnseignants();
+    }
+
+
 
     @PutMapping("{id}")
      public ResponseEntity<User> updateUser(@PathVariable("id") Integer id, @RequestBody User updatedUser) {

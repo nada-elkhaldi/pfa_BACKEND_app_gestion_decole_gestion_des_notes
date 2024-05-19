@@ -19,10 +19,14 @@ public class Semestre {
     @OneToMany(mappedBy = "semestre")
     private List<Matiere> matieres;
 
-    public Semestre(Integer id, String semestreAnnee, List<Matiere> matieres) {
+    @OneToMany(mappedBy = "semestre")
+    private List<Note> notes;
+
+    public Semestre(Integer id, String semestreAnnee, List<Matiere> matieres, List<Note> notes) {
         this.id = id;
         this.semestreAnnee = semestreAnnee;
         this.matieres = matieres;
+        this.notes = notes;
     }
 
     public Semestre() {

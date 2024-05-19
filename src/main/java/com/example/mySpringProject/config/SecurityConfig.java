@@ -35,11 +35,12 @@ public class SecurityConfig {
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
-                        req->req.requestMatchers("/api/v1/**")
+                        req->req.requestMatchers("api/v1/**")
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated()
-                ).userDetailsService(userDetailsServiceImp)
+                )
+                .userDetailsService(userDetailsServiceImp)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
@@ -47,8 +48,6 @@ public class SecurityConfig {
 
 
     }
-
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {

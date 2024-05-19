@@ -13,7 +13,8 @@ public class SemestreMapper {
         return new SemestreDto(
                 semestre.getId(),
                 semestre.getSemestreAnnee(),
-                semestre.getMatieres()
+                semestre.getMatieres(),
+                semestre.getNotes()
         );
 
     }
@@ -22,7 +23,8 @@ public class SemestreMapper {
         return new Semestre(
                 semestreDto.getId(),
                 semestreDto.getSemestreAnnee(),
-                semestreDto.getMatieres()
+                semestreDto.getMatieres(),
+                semestreDto.getNotes()
         );
     }
 }

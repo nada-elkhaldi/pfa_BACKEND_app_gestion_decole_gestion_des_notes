@@ -20,8 +20,9 @@ public class MatiereDto {
     private List<Classe> classes;
    private List<Groupe> groupes;
    private Semestre semestre;
+   private List<Note> notes;
 
-    public MatiereDto(Integer id, String code, String intitule, List<User> enseignants, List<Classe> classes, List<Groupe> groupes, Semestre semestre) {
+    public MatiereDto(Integer id, String code, String intitule, List<User> enseignants, List<Classe> classes, List<Groupe> groupes, Semestre semestre,  List<Note> notes) {
         this.id = id;
         this.code = code;
         this.intitule = intitule;
@@ -29,5 +30,6 @@ public class MatiereDto {
         this.classes = classes;
         this.groupes = groupes;
         this.semestre = semestre;
+        this.notes = notes;
     }
 }
