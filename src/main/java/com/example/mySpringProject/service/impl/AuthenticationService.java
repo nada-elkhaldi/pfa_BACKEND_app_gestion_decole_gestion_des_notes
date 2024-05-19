@@ -120,8 +120,8 @@ public AuthenticationResponse createUser(List<User> requests) {
         email.setSubject("Informations sur votre compte");
         email.setBody(
                 "Bonjour " + user.getRole() + "\n" +
-                        "Votre email est : " + user.getEmail() + "\n" +
-                        "Votre mot de passe est : " + generatedPassword);
+                        "       Votre email est : " + user.getEmail() + "\n" +
+                        "       Votre mot de passe est : " + generatedPassword);
 
         String result = emailService.sendMail(email);
         if (!result.equals("Email sent")) {
@@ -148,6 +148,18 @@ public AuthenticationResponse createUser(List<User> requests) {
         List<User> users = repository.findAll();
         return users.stream().map((user)-> user).collect(Collectors.toList());
     }
+
+
+    public List<User> getAllEtudiants() {
+        return repository.getAllEtudiants();
+    }
+
+    public List<User> getAllEnseignants() {
+        return repository.getAllEnseignants();
+    }
+
+
+
 
     public User updateUser(Integer id , User request) {
         User user= repository.findById(id).orElseThrow(
