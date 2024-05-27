@@ -9,12 +9,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class ClasseDto {
 
     private Integer id;
@@ -24,15 +24,19 @@ public class ClasseDto {
     private Integer nbrGroupe;
     private Matiere matiere;
 
-    public ClasseDto(Integer id, String nom, String specialite, String annee, Integer nbrCroupe, List<User> etudiants, List<Groupe> groupes, Matiere matiere) {
+
+
+
+
+    public ClasseDto(Integer id, String nom, String specialite, String annee, Integer nbrGroupe, Matiere matiere) {
         this.id = id;
         this.nom = nom;
         this.specialite = specialite;
         this.annee = annee;
-        this.nbrGroupe = nbrCroupe;
+        this.nbrGroupe = nbrGroupe;
         this.matiere = matiere;
-    }
 
+    }
 
 
 }

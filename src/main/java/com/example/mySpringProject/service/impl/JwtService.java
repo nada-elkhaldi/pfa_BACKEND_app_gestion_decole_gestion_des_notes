@@ -42,7 +42,7 @@ public class JwtService {
         Claims claims = extractAllClaims(token);
         return resolver.apply(claims);
     }
-    private Claims extractAllClaims(String token) {
+    Claims extractAllClaims(String token) {
         return Jwts
                 .parser()
                 .verifyWith(getSigningKey())
@@ -72,5 +72,10 @@ public class JwtService {
     private SecretKey getSigningKey(){
         byte[] keyBytes= Decoders.BASE64URL.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+
+    public String getSecretKey() {
+        return this.SECRET_KEY;
     }
 }

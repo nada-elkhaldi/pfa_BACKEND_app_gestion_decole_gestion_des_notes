@@ -19,8 +19,6 @@ public class ClasseMapper {
                 classe.getSpecialite(),
                 classe.getAnnee(),
                 classe.getNbrGroupe(),
-                classe.getEtudiants(),
-                classe.getGroupes(),
                 classe.getMatiere()
         );
 

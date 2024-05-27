@@ -14,12 +14,7 @@ public class MatiereMapper {
         return new MatiereDto(
                 matiere.getId(),
                 matiere.getCode(),
-                matiere.getIntitule(),
-                matiere.getEnseignants(),
-                matiere.getClasses(),
-                matiere.getGroupes(),
-                matiere.getSemestre(),
-                matiere.getNotes()
+                matiere.getIntitule()
         );
 
     }
@@ -28,12 +23,7 @@ public class MatiereMapper {
         return new Matiere(
                 matiereDto.getId(),
                 matiereDto.getCode(),
-                matiereDto.getIntitule(),
-                matiereDto.getEnseignants(),
-                matiereDto.getGroupes(),
-                matiereDto.getClasses(),
-                matiereDto.getSemestre(),
-                matiereDto.getNotes()
+                matiereDto.getIntitule()
 
         );
     }

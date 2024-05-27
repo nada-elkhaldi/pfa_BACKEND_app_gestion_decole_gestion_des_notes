@@ -18,13 +18,10 @@ public class SemestreDto {
 
     private Integer id;
     private String semestreAnnee;
-    private List<Matiere> matieres;
-    private List<Note> notes;
+    //private List<Note> notes;
 
-    public SemestreDto(Integer id, String semestreAnnee, List<Matiere> matieres, List<Note> notes) {
+    public SemestreDto(Integer id, String semestreAnnee) {
         this.id = id;
         this.semestreAnnee = semestreAnnee;
-        this.matieres=matieres;
-        this.notes = notes;
     }
 }

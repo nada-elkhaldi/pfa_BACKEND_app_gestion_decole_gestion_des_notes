@@ -1,29 +1,36 @@
 package com.example.mySpringProject.controller;
 
 
+import com.example.mySpringProject.dto.AddEtudiantAClasseDto;
+import com.example.mySpringProject.dto.ClasseDto;
+import com.example.mySpringProject.dto.GroupeDto;
 import com.example.mySpringProject.model.*;
-import com.example.mySpringProject.repository.ClasseRepository;
-import com.example.mySpringProject.repository.GroupeRepository;
-import com.example.mySpringProject.repository.UserRepository;
+
 import com.example.mySpringProject.service.impl.AuthenticationService;
+import com.example.mySpringProject.service.impl.ClasseServiceImpl;
 import com.example.mySpringProject.service.impl.EmailService;
-import org.springframework.data.crossstore.ChangeSetPersister;
+import com.example.mySpringProject.service.impl.GroupeServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequestMapping(value = "/api/v1/utilisateurs", method = {RequestMethod.POST, RequestMethod.OPTIONS})
+@RequestMapping(value = "/api/v1", method = {RequestMethod.POST,RequestMethod.GET,  RequestMethod.OPTIONS})
 @RestController
 
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
     private final EmailService emailService;
+    private final ClasseServiceImpl classeService;
+    private final GroupeServiceImpl groupeService;
 
-    public AuthenticationController(AuthenticationService authenticationService, EmailService emailService) {
+
+    public AuthenticationController(AuthenticationService authenticationService, EmailService emailService, ClasseServiceImpl classeService, GroupeServiceImpl groupeService) {
         this.authenticationService = authenticationService;
         this.emailService = emailService;
+        this.classeService = classeService;
+        this.groupeService = groupeService;
     }
 
     @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
@@ -59,12 +66,12 @@ public class AuthenticationController {
         return  ResponseEntity.ok(users);
     }
 
-
+    @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
     @GetMapping("/etudiants")
     public List<User> getAllEtudiants() {
         return authenticationService.getAllEtudiants();
     }
-
+    @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
     @GetMapping("/enseignants")
     public List<User> getAllEnseignants() {
         return authenticationService.getAllEnseignants();
@@ -84,6 +91,25 @@ public class AuthenticationController {
           authenticationService.deleteUser(id);
          return ResponseEntity.ok("User deleted");
 
+    }
+
+    @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+    @PostMapping("/etudiants/ajouter-a-classe")
+    public ResponseEntity<Void> ajouterEtudiantAClasse(@RequestBody AddEtudiantAClasseDto dto) {
+        User etudiant = authenticationService.getEtudiantById(dto.getEtudiantId());
+        Classe classe = classeService.getClasseById(dto.getClasseId());
+        Groupe groupe = groupeService.getGroupeById(dto.getGroupeId());
+        etudiant.setClasse(classe);
+        etudiant.setGroupe(groupe);
+        authenticationService.saveEtudiant(etudiant);
+        return ResponseEntity.ok().build();
+    }
+
+
+
+    @GetMapping("/classe/{classeId}/groupe/{groupeId}")
+    public List<User> getEtudiantsParClasseEtGroupe(@PathVariable Integer classeId, @PathVariable Integer groupeId) {
+        return authenticationService.getEtudiantsParClasseEtGroupe(classeId, groupeId);
     }
     }
 

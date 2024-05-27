@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Setter
 @Getter
 @Entity
@@ -23,17 +25,17 @@ public class Groupe {
     }
 
     @ManyToOne(optional = true)
-    @JoinColumn(name = "classe_id")
-    private Classe classe;
-
-    @ManyToOne(optional = true)
     @JoinColumn(name = "matiere_id")
     private Matiere matiere;
 
-    public Groupe(Integer id, String groupName, Classe classe, Matiere matiere) {
+
+
+
+    public Groupe(Integer id, String groupName, Matiere matiere) {
         this.id = id;
         this.groupName = groupName;
-        this.classe = classe;
         this.matiere = matiere;
+
     }
+
 }

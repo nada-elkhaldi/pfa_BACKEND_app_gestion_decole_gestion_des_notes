@@ -10,17 +10,20 @@ import java.util.List;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping(value= "api/v1/matieres")
+@RequestMapping(value= "/api2",  method = {RequestMethod.POST ,RequestMethod.GET,  RequestMethod.OPTIONS})
 public class MatiereController {
     private final MatiereService matiereService;
 
-    @PostMapping
+
+    @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+    @PostMapping("/addMatieres")
     public ResponseEntity<List<MatiereDto>> addMatiere(@RequestBody List<MatiereDto> matiereDto) {
         List<MatiereDto> savedMatieres = matiereService.createMatiere(matiereDto);
         return ResponseEntity.ok(savedMatieres);
     }
 
-    @GetMapping
+    @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+    @GetMapping("/matieres")
     public ResponseEntity<List<MatiereDto>> getAllMatieres() {
         List<MatiereDto> matieres = matiereService.getAllMatieres();
         return ResponseEntity.ok(matieres);

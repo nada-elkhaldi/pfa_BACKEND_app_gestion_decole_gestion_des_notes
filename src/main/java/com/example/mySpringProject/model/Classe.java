@@ -19,11 +19,7 @@ public class Classe {
     private Integer nbrGroupe;
 
 
-    @OneToMany(mappedBy = "classe")
-    private List<User> etudiants;
 
-    @OneToMany(mappedBy = "classe")
-    private List<Groupe> groupes;
 
     @ManyToOne(optional = true)
     @JoinColumn(name = "matiere_id")

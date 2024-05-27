@@ -7,6 +7,9 @@ import com.example.mySpringProject.model.*;
 import com.example.mySpringProject.repository.ClasseRepository;
 import com.example.mySpringProject.repository.MatiereRepository;
 import com.example.mySpringProject.repository.UserRepository;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 //import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,43 +43,6 @@ public class AuthenticationService {
         this.matiereRepository = matiereRepository;
     }
 
-//    public AuthenticationResponse createUser(User request) {
-//        User user = new User();
-//        user.setFirstName(request.getFirstName());
-//        user.setLastName(request.getLastName());
-//        user.setEmail(request.getEmail());
-//        Classe classe = request.getClasse();
-//        if (classe != null && classe.getId() != null) {
-//            classe = classeRepository.getById(classe.getId());
-//            user.setClasse(classe);
-//        }
-//
-//        //generation de mot de passe
-//        String generatedPassword = passwordGenerator.generatePassword();
-//        System.out.println(generatedPassword);
-//        String encryptedPassword = passwordGenerator.encryptPassword(generatedPassword);
-//        user.setPassword(encryptedPassword);
-//        user.setRole(request.getRole());
-//        repository.save(user);
-//
-//        String token = jwtService.generateToken(user);
-//        //envoyer l'e-mail d'authentification
-//        Email email = new Email();
-//        email.setRecipient(user.getEmail());
-//        email.setSubject("Informations sur votre compte");
-//        email.setBody(
-//                "Bonjour "+user.getRole()+ "\n" +
-//                "Votre email est : " + user.getEmail() + "\n" +
-//                "Votre mot de passe est : " + generatedPassword);
-//
-//        String result = emailService.sendMail(email);
-//        if (result.equals("Email sent")) {
-//            return new AuthenticationResponse(token);
-//        } else {
-//            throw new RuntimeException("Une erreur s'est produite lors de l'envoi de l'e-mail.");
-//        }
-//    }
-
 
 public AuthenticationResponse createUser(List<User> requests) {
     if (requests.isEmpty()) {
@@ -95,12 +61,6 @@ public AuthenticationResponse createUser(List<User> requests) {
         if (classe != null && classe.getId() != null) {
             classe = classeRepository.getById(classe.getId());
             user.setClasse(classe);
-        }
-
-        Matiere matiere = request.getMatiere();
-        if (matiere != null && matiere.getId() != null) {
-            matiere = matiereRepository.getById(matiere.getId());
-            user.setMatiere(matiere);
         }
 
         //generation de mot de passe
@@ -144,6 +104,12 @@ public AuthenticationResponse createUser(List<User> requests) {
 
     }
 
+    public User getEtudiantById(int id) {
+        return repository.findByIdAndRole(id, Role.ETUDIANT);
+
+
+    }
+
     public List<User> getAllUsers() {
         List<User> users = repository.findAll();
         return users.stream().map((user)-> user).collect(Collectors.toList());
@@ -157,8 +123,6 @@ public AuthenticationResponse createUser(List<User> requests) {
     public List<User> getAllEnseignants() {
         return repository.getAllEnseignants();
     }
-
-
 
 
     public User updateUser(Integer id , User request) {
@@ -179,4 +143,15 @@ public AuthenticationResponse createUser(List<User> requests) {
                 ()-> new ResourceNotFoundException("User with id " + id + " not found"));
         repository.deleteById(id);
     }
+
+
+    public void saveEtudiant(User etudiant) {
+        repository.save(etudiant);
+    }
+
+            public List<User> getEtudiantsParClasseEtGroupe(Integer classeId, Integer groupeId) {
+        return repository.findByClasseIdAndGroupeId(classeId, groupeId);
+    }
+
+
 }
