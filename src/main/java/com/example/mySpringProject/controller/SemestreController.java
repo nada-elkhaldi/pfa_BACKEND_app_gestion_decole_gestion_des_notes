@@ -12,18 +12,20 @@ import java.util.List;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping(value= "api/v1/semestres")
+@RequestMapping(value= "/api4",  method = {RequestMethod.POST,RequestMethod.GET,  RequestMethod.OPTIONS})
 public class SemestreController {
 
     private final SemestreService semestreService;
 
-    @PostMapping
+    @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+    @PostMapping("/addSemestre")
     public ResponseEntity<SemestreDto> addSemestre(@RequestBody SemestreDto semestreDto) {
         SemestreDto savedSemestre= semestreService.createSemestre(semestreDto);
         return ResponseEntity.ok(savedSemestre);
     }
 
-    @GetMapping
+    @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+    @GetMapping("/semestres")
     public ResponseEntity<List<SemestreDto>> getAllSemestres() {
         List<SemestreDto> semestres = semestreService.getAllSemestre();
         return  ResponseEntity.ok(semestres);

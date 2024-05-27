@@ -3,9 +3,7 @@ package com.example.mySpringProject.service.impl;
 
 import com.example.mySpringProject.dto.GroupeDto;
 import com.example.mySpringProject.mapper.GroupeMapper;
-import com.example.mySpringProject.mapper.UserMapper;
 import com.example.mySpringProject.model.Groupe;
-import com.example.mySpringProject.model.User;
 import com.example.mySpringProject.repository.GroupeRepository;
 import com.example.mySpringProject.service.GroupeService;
 import lombok.AllArgsConstructor;
@@ -32,5 +30,12 @@ public class GroupeServiceImpl implements GroupeService {
          List<Groupe> groupes = groupeRepository.findAll();
          return groupes.stream().map((groupe)-> groupeMapper.mapToGroupDto(groupe))
                  .collect(Collectors.toList());
+    }
+
+    @Override
+    public Groupe getGroupeById(int id) {
+        Groupe groupe = groupeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Groupe not found with id: " + id));
+        return groupe;
     }
 }

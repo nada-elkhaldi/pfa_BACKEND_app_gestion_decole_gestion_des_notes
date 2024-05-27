@@ -39,13 +39,15 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+
+
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "groupe_id")
+    private Groupe groupe;
+
     @ManyToOne(optional = true)
     @JoinColumn(name = "classe_id")
     private Classe classe;
-
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "matiere_id")
-    private Matiere matiere;
 
     @OneToMany(mappedBy = "etudiant")
     private List<Note> notes = new ArrayList<>();
@@ -92,4 +94,6 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+
 }

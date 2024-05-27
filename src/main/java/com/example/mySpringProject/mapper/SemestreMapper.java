@@ -12,9 +12,7 @@ public class SemestreMapper {
     public static SemestreDto mapToSemestreDto(Semestre semestre) {
         return new SemestreDto(
                 semestre.getId(),
-                semestre.getSemestreAnnee(),
-                semestre.getMatieres(),
-                semestre.getNotes()
+                semestre.getSemestreAnnee()
         );
 
     }
@@ -22,9 +20,7 @@ public class SemestreMapper {
     public static Semestre mapToSemestre(SemestreDto semestreDto) {
         return new Semestre(
                 semestreDto.getId(),
-                semestreDto.getSemestreAnnee(),
-                semestreDto.getMatieres(),
-                semestreDto.getNotes()
+                semestreDto.getSemestreAnnee()
         );
     }
 }

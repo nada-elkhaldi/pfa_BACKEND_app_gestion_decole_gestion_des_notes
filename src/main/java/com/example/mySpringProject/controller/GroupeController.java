@@ -13,7 +13,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping(value= "api/v1/groupes")
+@RequestMapping(value = "/api1", method = {RequestMethod.POST, RequestMethod.GET,  RequestMethod.OPTIONS})
 public class GroupeController {
 
     private final GroupeService groupeService;
@@ -23,8 +23,8 @@ public class GroupeController {
         GroupeDto savedGroup= groupeService.createGroupe(groupeDto);
         return new ResponseEntity<>(savedGroup, HttpStatus.CREATED);
     }
-
-    @GetMapping
+    @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+    @GetMapping("/groupes")
     public ResponseEntity<List<GroupeDto>> getAllGroupes() {
          List<GroupeDto> groupes = groupeService.getAllGroupes();
          return  ResponseEntity.ok(groupes);

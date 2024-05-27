@@ -16,22 +16,8 @@ public class Matiere {
     private String code;
     private String intitule;
 
-    @OneToMany(mappedBy = "matiere")
-    private List<User> enseignants;
-
-    @OneToMany(mappedBy = "matiere")
-    private List<Groupe> groupes;
-
-    @OneToMany(mappedBy = "matiere")
-    private List<Classe> classes;
-
-    @OneToMany(mappedBy = "matiere")
-    private List<Note> notes;
-
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "semestre_id")
-    private Semestre semestre;
-
+//    @OneToMany(mappedBy = "matiere")
+//    private List<Note> notes;
     
 
     public Matiere() {
@@ -40,14 +26,9 @@ public class Matiere {
 
 
 
-    public Matiere(Integer id, String code, String intitule, List<User> enseignants, List<Groupe> groupes, List<Classe> classes, Semestre semestre, List<Note> notes) {
+    public Matiere(Integer id, String code, String intitule) {
         this.id = id;
         this.code = code;
         this.intitule = intitule;
-        this.enseignants = enseignants;
-        this.groupes = groupes;
-        this.classes = classes;
-        this.semestre = semestre;
-        this.notes = notes;
     }
 }

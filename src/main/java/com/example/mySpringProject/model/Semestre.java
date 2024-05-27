@@ -16,22 +16,17 @@ public class Semestre {
     private Integer id;
     private String semestreAnnee;
 
-    @OneToMany(mappedBy = "semestre")
-    private List<Matiere> matieres;
 
-    @OneToMany(mappedBy = "semestre")
-    private List<Note> notes;
+//    @OneToMany(mappedBy = "semestre")
+//    private List<Note> notes;
 
-    public Semestre(Integer id, String semestreAnnee, List<Matiere> matieres, List<Note> notes) {
+    public Semestre(Integer id, String semestreAnnee) {
         this.id = id;
         this.semestreAnnee = semestreAnnee;
-        this.matieres = matieres;
-        this.notes = notes;
+
     }
 
     public Semestre() {
     }
 
-    public Semestre(Integer id, String semestreAnnee) {
-    }
 }

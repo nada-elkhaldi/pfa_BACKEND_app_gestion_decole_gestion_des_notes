@@ -12,7 +12,6 @@ public class GroupeMapper {
         return new GroupeDto(
                 groupe.getId(),
                 groupe.getGroupName(),
-                groupe.getClasse(),
                 groupe.getMatiere()
         );
 
@@ -22,7 +21,6 @@ public class GroupeMapper {
         return new Groupe(
                groupeDto.getId(),
                 groupeDto.getGroupName(),
-                groupeDto.getClasse(),
                 groupeDto.getMatiere()
         );
     }

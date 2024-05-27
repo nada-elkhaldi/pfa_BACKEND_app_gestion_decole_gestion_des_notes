@@ -40,4 +40,11 @@ public class ClasseServiceImpl implements ClasseService {
         return classes.stream().map((classe)-> classeMapper.mapToClasseDto(classe))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Classe getClasseById(int id) {
+        Classe classe = classeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Classe not found with id: " + id));
+        return classe;
+    }
 }
