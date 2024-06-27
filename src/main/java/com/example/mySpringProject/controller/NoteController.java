@@ -80,7 +80,6 @@ public List<NoteDto> getNotesBySemestreAndMatiere(
             NoteDto noteDto = mapToNoteDto(note);
             noteDtos.add(noteDto);
         }
-
         return noteDtos;
     } catch (ResponseStatusException ex) {
         throw ex;
@@ -88,6 +87,7 @@ public List<NoteDto> getNotesBySemestreAndMatiere(
         throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An error occurred", ex);
     }
 }
+//pour recuperer les notes d etudiant
     @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
     @GetMapping("/etudiant/{semesterId}/{studentId}")
     public ResponseEntity<List<Note>> getStudentNotesBySemester(
