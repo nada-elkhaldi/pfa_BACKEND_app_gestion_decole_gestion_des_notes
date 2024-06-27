@@ -96,12 +96,12 @@ public class AuthenticationController {
     @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
     @PostMapping("/etudiants/ajouter-a-classe")
     public ResponseEntity<Void> ajouterEtudiantAClasse(@RequestBody AddEtudiantAClasseDto dto) {
-        User etudiant = authenticationService.getEtudiantById(dto.getEtudiantId());
+        User student = authenticationService.getEtudiantById(dto.getEtudiantId());
         Classe classe = classeService.getClasseById(dto.getClasseId());
         Groupe groupe = groupeService.getGroupeById(dto.getGroupeId());
-        etudiant.setClasse(classe);
-        etudiant.setGroupe(groupe);
-        authenticationService.saveEtudiant(etudiant);
+        student.setClasse(classe);
+        student.setGroupe(groupe);
+        authenticationService.saveEtudiant(student);
         return ResponseEntity.ok().build();
     }
 
