@@ -31,4 +31,10 @@ public class SemestreServiceImpl implements SemestreService {
         return semestres.stream().map((semestre)-> semestreMapper.mapToSemestreDto(semestre))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Semestre getSemestreById(Integer semestreId) {
+        return semestreRepository.findById(semestreId)
+                .orElseThrow(() -> new RuntimeException("Semestre not found with id: " + semestreId));
+    }
 }

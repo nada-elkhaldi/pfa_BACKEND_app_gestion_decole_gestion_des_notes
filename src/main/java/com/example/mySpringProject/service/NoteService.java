@@ -9,7 +9,11 @@ import java.util.List;
 
 public interface NoteService {
 
-    List<NoteDto> addNote(List<NoteDto> noteDto);
+    List<NoteDto> addNoteWithAverageCalculation(List<NoteDto> noteDto);
     List<Note> getNotesBySemestreAndMatiere(Semestre semestre, Matiere matiere);
-    Double calculerMoyenne(Note note);
+   // Double calculerMoyenne(Note note);
+
+    List<Note> findBySemesterIdAndStudentId(Integer semesterId, Integer studentId);
+
+
 }

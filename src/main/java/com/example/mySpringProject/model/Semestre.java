@@ -17,9 +17,6 @@ public class Semestre {
     private String semestreAnnee;
 
 
-//    @OneToMany(mappedBy = "semestre")
-//    private List<Note> notes;
-
     public Semestre(Integer id, String semestreAnnee) {
         this.id = id;
         this.semestreAnnee = semestreAnnee;

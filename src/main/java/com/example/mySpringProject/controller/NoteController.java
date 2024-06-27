@@ -10,16 +10,19 @@ import com.example.mySpringProject.repository.NoteRepository;
 import com.example.mySpringProject.repository.SemestreRepository;
 import com.example.mySpringProject.service.NoteService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import static com.example.mySpringProject.mapper.NoteMapper.mapToNoteDto;
+
+@RequestMapping(value = "/api5/notes", method = {RequestMethod.POST,RequestMethod.GET,  RequestMethod.OPTIONS})
 @RestController
-@RequestMapping(value= "api/v1/notes")
 public class NoteController {
 
     private NoteService noteService;
@@ -35,33 +38,61 @@ public class NoteController {
         this.noteRepository = noteRepository;
     }
 
-
-    @PostMapping
-    public ResponseEntity<List<NoteDto>> addNote(@RequestBody List<NoteDto> noteDto) {
-        List<NoteDto> savedNotes = noteService.addNote(noteDto);
+    @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+    @PostMapping("/addNote")
+    public ResponseEntity<List<NoteDto>> addNoteWithAverageCalculation(@RequestBody List<NoteDto> noteDtoList) {
+        List<NoteDto> savedNotes = noteService.addNoteWithAverageCalculation(noteDtoList);
         return ResponseEntity.ok(savedNotes);
     }
-    @GetMapping("/{semestreId}/{matiereId}")
-    public List<Note> getNotesBySemestreAndMatiere(
-            @PathVariable("semestreId") Integer semestreId,
-            @PathVariable("matiereId") Integer matiereId) {
+
+
+
+    @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+    @GetMapping("/{noteId}")
+    public ResponseEntity<Note> getNoteById(@PathVariable("noteId") Integer noteId) {
         try {
-            Semestre semestre = semestreRepository.findById(semestreId)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Semestre not found"));
-            Matiere matiere = matiereRepository.findById(matiereId)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Matiere not found"));
-            return noteService.getNotesBySemestreAndMatiere(semestre, matiere);
-        } catch (ResponseStatusException ex) {
-            throw ex;
+            Optional<Note> note = noteRepository.findById(noteId);
+            if (note.isPresent()) {
+                return ResponseEntity.ok(note.get());
+            } else {
+                return ResponseEntity.notFound().build();
+            }
         } catch (Exception ex) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An error occurred", ex);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erreur lors de la récupération de la note", ex);
         }
     }
 
-    @GetMapping("/moyenne/{noteId}")
-    public Double calculerMoyenne(@PathVariable("noteId") Integer noteId) throws ChangeSetPersister.NotFoundException {
+@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+@GetMapping("/{semestreId}/{matiereId}")
+public List<NoteDto> getNotesBySemestreAndMatiere(
+        @PathVariable("semestreId") Integer semestreId,
+        @PathVariable("matiereId") Integer matiereId) {
+    try {
+        Semestre semestre = semestreRepository.findById(semestreId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Semestre not found"));
+        Matiere matiere = matiereRepository.findById(matiereId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Matiere not found"));
 
-        Note note = noteRepository.findById(noteId).orElseThrow(() -> new ChangeSetPersister.NotFoundException());
-        return noteService.calculerMoyenne(note);
+        List<Note> notes = noteService.getNotesBySemestreAndMatiere(semestre, matiere);
+        List<NoteDto> noteDtos = new ArrayList<>();
+
+        for (Note note : notes) {
+            NoteDto noteDto = mapToNoteDto(note);
+            noteDtos.add(noteDto);
+        }
+
+        return noteDtos;
+    } catch (ResponseStatusException ex) {
+        throw ex;
+    } catch (Exception ex) {
+        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An error occurred", ex);
+    }
+}
+    @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+    @GetMapping("/etudiant/{semesterId}/{studentId}")
+    public ResponseEntity<List<Note>> getStudentNotesBySemester(
+            @PathVariable Integer semesterId, @PathVariable Integer studentId) {
+        List<Note> studentNotes = noteService.findBySemesterIdAndStudentId(semesterId, studentId);
+        return ResponseEntity.ok(studentNotes);
     }
 }

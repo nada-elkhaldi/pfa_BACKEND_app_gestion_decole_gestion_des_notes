@@ -25,7 +25,6 @@ public class Note {
     private Double coefCtl2;
 
     private Double moyenne;
-    //private Double bulletin;
 
     @ManyToOne(optional = true)
     @JoinColumn(name = "etudiant_id")
@@ -59,4 +58,31 @@ public class Note {
         this.matiere = matiere;
         this.semestre = semestre;
     }
+
+    public User getEtudiant() {
+        return etudiant;
+    }
+
+    public void setEtudiant(User etudiant) {
+        this.etudiant = etudiant;
+    }
+
+    public Semestre getSemestre() {
+        return semestre;
+    }
+
+    public void setSemestre(Semestre semestre) {
+        this.semestre = semestre;
+    }
+
+    public Matiere getMatiere() {
+        return matiere;
+    }
+
+    public void setMatiere(Matiere matiere) {
+        this.matiere = matiere;
+    }
+
+
+
 }

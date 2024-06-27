@@ -35,7 +35,7 @@ public class EmailService {
 
             return "Email sent";
         } catch (Exception e) {
-            e.printStackTrace(); // Affichez les détails de l'exception pour le débogage
+            e.printStackTrace();
             return "Email not sent";
         }
     }

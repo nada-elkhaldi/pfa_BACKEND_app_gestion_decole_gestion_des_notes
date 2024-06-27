@@ -49,8 +49,7 @@ public class User implements UserDetails {
     @JoinColumn(name = "classe_id")
     private Classe classe;
 
-    @OneToMany(mappedBy = "etudiant")
-    private List<Note> notes = new ArrayList<>();
+
 
 
     public User(Integer id, String firstName, String lastName, String password, Role role) {
