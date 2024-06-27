@@ -29,13 +29,12 @@ public class SecurityConfig {
     }
 
     @Bean
-
     public DefaultSecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
-                        req->req.requestMatchers("api/**","/api1/**","/api2/**","/api3/**", "/api4/**","/api5/**","/api6/**")
+                        req->req.requestMatchers("/api/**","/api1/**","/api2/**","/api3/**", "/api4/**","/api5/**","/api6/**")
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated()

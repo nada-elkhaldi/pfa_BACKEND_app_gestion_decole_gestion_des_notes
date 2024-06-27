@@ -56,4 +56,8 @@ public class PlanificationService {
     public List<PlanificationMatiere> getAllPlanifications() {
         return planificationRepository.findAll();
     }
+
+    public List<PlanificationMatiere> getPlanificationsBySemestreClasseAndGroupe(Semestre semestre, Classe classe, Groupe groupe) {
+        return planificationRepository.findBySemestreAndClasseAndGroupe(semestre, classe, groupe);
+    }
 }

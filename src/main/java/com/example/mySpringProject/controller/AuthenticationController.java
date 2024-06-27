@@ -106,7 +106,7 @@ public class AuthenticationController {
     }
 
 
-
+    @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
     @GetMapping("/classe/{classeId}/groupe/{groupeId}")
     public List<User> getEtudiantsParClasseEtGroupe(@PathVariable Integer classeId, @PathVariable Integer groupeId) {
         return authenticationService.getEtudiantsParClasseEtGroupe(classeId, groupeId);

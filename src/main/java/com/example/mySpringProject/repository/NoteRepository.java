@@ -16,4 +16,10 @@ public interface NoteRepository extends JpaRepository<Note, Integer> {
 
     @Query("SELECT n FROM Note n WHERE n.semestre = :semestre AND n.matiere = :matiere")
     List<Note> findBySemestreAndMatiere(@Param("semestre") Semestre semestre, @Param("matiere") Matiere matiere);
+
+
+
+    @Query("SELECT n FROM Note n WHERE n.semestre.id = :semestreId AND n.etudiant.id = :studentId")
+    List<Note> findBySemesterIdAndStudentId(@Param("semestreId") Integer semestreId,
+                                                        @Param("studentId") Integer studentId);
 }

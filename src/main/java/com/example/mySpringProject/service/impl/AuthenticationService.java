@@ -48,9 +48,7 @@ public AuthenticationResponse createUser(List<User> requests) {
     if (requests.isEmpty()) {
         throw new IllegalArgumentException("La liste des utilisateurs est vide.");
     }
-
     List<String> tokens = new ArrayList<>(requests.size());
-
     for (User request : requests) {
         User user = new User();
         user.setFirstName(request.getFirstName());
@@ -77,7 +75,7 @@ public AuthenticationResponse createUser(List<User> requests) {
         // envoi de l e-mail d'authentification
         Email email = new Email();
         email.setRecipient(user.getEmail());
-        email.setSubject("Informations sur votre compte");
+        email.setSubject("Informations sur votre compte: ");
         email.setBody(
                 "Bonjour " + user.getRole() + "\n" +
                         "       Votre email est : " + user.getEmail() + "\n" +
