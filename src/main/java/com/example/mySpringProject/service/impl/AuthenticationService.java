@@ -5,18 +5,16 @@ import com.example.mySpringProject.controller.PasswordGenerator;
 import com.example.mySpringProject.exception.ResourceNotFoundException;
 import com.example.mySpringProject.model.*;
 import com.example.mySpringProject.repository.ClasseRepository;
-import com.example.mySpringProject.repository.MatiereRepository;
 import com.example.mySpringProject.repository.UserRepository;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-//import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,22 +23,28 @@ public class AuthenticationService {
     private final UserRepository repository;
     private  final ClasseRepository classeRepository;
     private final JwtService jwtService;
-
+    private final PasswordEncoder passwordEncoder;
     private final PasswordGenerator passwordGenerator; // Ajout de la dépendance PasswordGenerator
 
     private final AuthenticationManager authenticationManager;
     private final EmailService emailService;
-    private final MatiereRepository matiereRepository;
 
-    public AuthenticationService(UserRepository repository, ClasseRepository classeRepository, JwtService jwtService, PasswordGenerator passwordGenerator, AuthenticationManager authenticationManager, EmailService emailService, MatiereRepository matiereRepository) {
+
+    @Autowired
+    public AuthenticationService(UserRepository repository,
+                                 ClasseRepository classeRepository,
+                                 JwtService jwtService,
+                                 PasswordEncoder passwordEncoder,
+                                 PasswordGenerator passwordGenerator,
+                                 AuthenticationManager authenticationManager,
+                                 EmailService emailService) {
         this.repository = repository;
         this.classeRepository = classeRepository;
-
         this.jwtService = jwtService;
+        this.passwordEncoder = passwordEncoder;
         this.passwordGenerator = passwordGenerator;
         this.authenticationManager = authenticationManager;
         this.emailService = emailService;
-        this.matiereRepository = matiereRepository;
     }
 
 
@@ -60,14 +64,12 @@ public AuthenticationResponse createUser(List<User> requests) {
             classe = classeRepository.getById(classe.getId());
             user.setClasse(classe);
         }
-
         //generation de mot de passe
         String generatedPassword = passwordGenerator.generatePassword();
         String encryptedPassword = passwordGenerator.encryptPassword(generatedPassword);
         user.setPassword(encryptedPassword);
         user.setRole(request.getRole());
         repository.save(user);
-
         //generation du jeton
         String token = jwtService.generateToken(user);
         tokens.add(token);
@@ -147,9 +149,25 @@ public AuthenticationResponse createUser(List<User> requests) {
         repository.save(etudiant);
     }
 
-            public List<User> getEtudiantsParClasseEtGroupe(Integer classeId, Integer groupeId) {
+    public List<User> getEtudiantsParClasseEtGroupe(Integer classeId, Integer groupeId) {
         return repository.findByClasseIdAndGroupeId(classeId, groupeId);
     }
 
 
+    public boolean changePassword(Integer userId, String newPassword) {
+        Optional<User> optionalUser = repository.findById(userId);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+
+            // Encrypter le nouveau mot de passe
+            String encryptedPassword = passwordEncoder.encode(newPassword);
+            user.setPassword(encryptedPassword);
+
+            // Enregistrement du nouvel utilisateur
+            repository.save(user);
+
+            return true;
+        }
+        return false;
+    }
 }

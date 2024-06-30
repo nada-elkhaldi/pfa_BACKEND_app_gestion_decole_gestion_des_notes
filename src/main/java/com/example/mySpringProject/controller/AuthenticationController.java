@@ -111,7 +111,22 @@ public class AuthenticationController {
     public List<User> getEtudiantsParClasseEtGroupe(@PathVariable Integer classeId, @PathVariable Integer groupeId) {
         return authenticationService.getEtudiantsParClasseEtGroupe(classeId, groupeId);
     }
+
+
+
+    //changemant du mot de passe
+    @PutMapping("/utilisateurs/{id}/motdepasse")
+    public ResponseEntity<String> changerMotDePasse(@PathVariable Integer id, @RequestBody ChangePasswordRequest request) {
+        String nouveauMotDePasse = request.getNewPassword();
+
+        if (authenticationService.changePassword(id, nouveauMotDePasse)) {
+            return ResponseEntity.ok("Mot de passe changé avec succès.");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
+    }
+
 
 
 
