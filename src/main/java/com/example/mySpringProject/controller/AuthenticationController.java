@@ -115,6 +115,7 @@ public class AuthenticationController {
 
 
     //changemant du mot de passe
+    @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
     @PutMapping("/utilisateurs/{id}/motdepasse")
     public ResponseEntity<String> changerMotDePasse(@PathVariable Integer id, @RequestBody ChangePasswordRequest request) {
         String nouveauMotDePasse = request.getNewPassword();
