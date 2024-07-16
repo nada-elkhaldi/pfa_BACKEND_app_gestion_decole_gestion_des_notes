@@ -27,7 +27,7 @@ public class SecurityConfig {
         this.userDetailsServiceImp = userDetailsServiceImp;
         this.jwtAuthenticationFilter = authenticationFilter;
     }
-
+//
     @Bean
     public DefaultSecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
