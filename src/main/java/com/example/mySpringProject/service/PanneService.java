@@ -21,5 +21,6 @@ public interface PanneService {
 
     double calculerTauxDisponibilite(Integer id);
 
+    //pieces jointes
     Panne updateAvisPath(Integer id, String avisPath);
 }

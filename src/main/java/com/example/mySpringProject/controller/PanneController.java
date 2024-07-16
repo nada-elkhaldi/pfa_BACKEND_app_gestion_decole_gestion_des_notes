@@ -83,7 +83,7 @@ public class PanneController {
         try {
             // Enregistrer le fichier sur le serveur dans un dossier spécifique à la panne
             String fileName = saveFile(file, id);
-            // Mettre à jour l'entité Panne avec le chemin du fichier
+            //
             Panne updatedPanne = panneService.updateAvisPath(id, fileName);
 
             return new ResponseEntity<>("File uploaded successfully: " + fileName, HttpStatus.OK);

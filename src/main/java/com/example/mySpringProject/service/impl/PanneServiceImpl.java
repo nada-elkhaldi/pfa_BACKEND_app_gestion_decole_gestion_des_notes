@@ -266,7 +266,6 @@ public class PanneServiceImpl implements PanneService {
     // Tâche planifiée pour incrémenter le temps hors service toutes les heures
     //@Scheduled(cron = "0 0 * * * *")
     @Scheduled(cron = "0 * * * * *") // Exécution chaque minute
-
     public void incrementOutOfServiceTimeForAllPannes() {
         List<Panne> pannes = panneRepository.findAll();
         for (Panne panne : pannes) {
@@ -281,7 +280,6 @@ public class PanneServiceImpl implements PanneService {
         Panne panne = panneRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Panne not found"));
 
-        // Check if both dateDebutService and dateFinService are not null
         if (panne.getDateDebutService() == null || panne.getDatePanne() == null) {
             throw new RuntimeException("Cannot calculate availability rate: missing start or end service dates.");
         }

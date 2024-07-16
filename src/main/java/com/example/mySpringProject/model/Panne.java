@@ -87,8 +87,6 @@ public class Panne {
 
     }
 
-
-
     public void incrementOutOfServiceTime() {
         if (this.etatGeneral.equals("hors service")) {
             LocalDateTime now = LocalDateTime.now();
@@ -98,7 +96,6 @@ public class Panne {
         }
     }
 
-    // Method to stop counting out of service time
     public void stopOutOfServiceTime() {
         if ("remise en service".equals(this.etatGeneral) && this.outOfServiceStartTime != null) {
             Duration duration = Duration.between(this.outOfServiceStartTime, LocalDateTime.now());
