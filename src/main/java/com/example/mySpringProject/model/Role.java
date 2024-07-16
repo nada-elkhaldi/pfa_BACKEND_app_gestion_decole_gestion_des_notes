@@ -4,6 +4,8 @@ public enum Role {
 
 
     ADMIN,
-    ENSEIGNANT,
-    ETUDIANT
+    DPE,
+    DPDPM,
+    DHOC,
+    AutoPort
 }

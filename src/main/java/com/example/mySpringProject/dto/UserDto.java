@@ -21,6 +21,8 @@ public class UserDto{
     private String firstName;
     private String lastName;
     private String email;
+    private String region;
+    private String organisme;
     private String password;
     @Enumerated(EnumType.STRING)
     private Role role;

@@ -29,8 +29,16 @@ public class User implements UserDetails {
     @Column(name="last_name")
     private String lastName;
 
+    @Column(name="region")
+    private String region;
+
+    @Column(name="organisme")
+    private String organisme;
+
+
     @Column(name="email")
     private String email;
+
 
     @Column(name="password")
     private String password;
@@ -41,21 +49,18 @@ public class User implements UserDetails {
 
 
 
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "groupe_id")
-    private Groupe groupe;
-
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "classe_id")
-    private Classe classe;
 
 
 
 
-    public User(Integer id, String firstName, String lastName, String password, Role role) {
+
+    public User(Integer id, String firstName, String lastName, String email, String region, String organisme, String password, Role role) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.email = email;
+        this.region = region;
+        this.organisme = organisme;
         this.password = password;
         this.role = role;
     }
