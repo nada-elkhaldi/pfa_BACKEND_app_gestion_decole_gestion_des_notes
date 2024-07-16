@@ -83,9 +83,7 @@ public class PanneController {
         try {
             // Enregistrer le fichier sur le serveur dans un dossier spécifique à la panne
             String fileName = saveFile(file, id);
-
             Panne updatedPanne = panneService.updateAvisPath(id, fileName);
-
             return new ResponseEntity<>("File uploaded successfully: " + fileName, HttpStatus.OK);
         } catch (IOException e) {
             return new ResponseEntity<>("Could not upload the file: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -102,7 +100,6 @@ public class PanneController {
         if (!uploadDirFile.exists()) {
             uploadDirFile.mkdirs();
         }
-
         // Créer le fichier de destination
         File dest = new File(uploadDir + fileName);
         file.transferTo(dest);
@@ -129,8 +126,5 @@ public class PanneController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
-
-
-
 
 }
