@@ -14,14 +14,14 @@ import java.util.List;
 @RequestMapping(value= "/api6",  method = {RequestMethod.POST,RequestMethod.GET,  RequestMethod.OPTIONS})
 public class BudgetController {
     private final BudgetService budgetService;
-    @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @PostMapping("/addBudget")
     public ResponseEntity<Budget> addBudget(@RequestBody Budget budget) {
         Budget savedBudget= budgetService.addBudget(budget);
         return ResponseEntity.ok(savedBudget);
     }
 
-    @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @GetMapping("/budgets")
     public ResponseEntity<List<Budget>> getAllBudgets() {
         List<Budget> budgets = budgetService.getAllBudgets();

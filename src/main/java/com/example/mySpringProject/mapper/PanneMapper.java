@@ -14,7 +14,6 @@ public class PanneMapper {
                 panne.getId(),
                 panne.getNatureDePanne(),
                 panne.getDatePanne(),
-                panne.getTypeDeclaration(),
                 panne.getEtatGeneral(),
                 panne.getEtatFonctionnementDeFeuDeSecours(),
                 panne.getMotifDePanne(),
@@ -23,27 +22,26 @@ public class PanneMapper {
                 panne.getPrevisionDeResolution(),
                 panne.getOutOfServiceTime(),
                 panne.getDateDebutService(),
-                panne.getDateFinService(),
                 panne.getTauxDeDisponibilite(),
-                panne.getRapportPdf(),
                 panne.getAvisAuNavPdf(),
-                panne.getPiecesJointes(),
                 panne.getEmailDHOC(),
                 panne.getEmailDPDPM(),
                 panne.getEmailDeclarant(),
                 panne.getFeu() != null ? panne.getFeu().getId() :null,
                 panne.getRegion() != null ? panne.getRegion().getId() :null,
-                panne.getProvince() != null ? panne.getProvince().getId() :null
+                panne.getProvince() != null ? panne.getProvince().getId() :null,
+                panne.getFeu(),
+                panne.getRegion(),
+                panne.getProvince()
 
 
         );
     }
     public static Panne mapToPanne(PanneDto panneDto) {
-       Panne newPanne = new Panne();
+        Panne newPanne = new Panne();
         newPanne.setId(panneDto.getId());
         newPanne.setNatureDePanne(panneDto.getNatureDePanne());
         newPanne.setDatePanne(panneDto.getDatePanne());
-        newPanne.setTypeDeclaration(panneDto.getTypeDeclaration());
         newPanne.setEtatGeneral(panneDto.getEtatGeneral());
         newPanne.setEtatFonctionnementDeFeuDeSecours(panneDto.getEtatFonctionnementDeFeuDeSecours());
         newPanne.setMotifDePanne(panneDto.getMotifDePanne());
@@ -52,13 +50,12 @@ public class PanneMapper {
         newPanne.setPrevisionDeResolution(panneDto.getPrevisionDeResolution());
         newPanne.setOutOfServiceTime(panneDto.getOutOfServiceTime());
         newPanne.setDateDebutService(panneDto.getDateDebutService());
-        newPanne.setDateFinService(panneDto.getDateFinService());
         newPanne.setTauxDeDisponibilite(panneDto.getTauxDeDisponibilite());
-        newPanne.setRapportPdf(panneDto.getRapportPdf());
         newPanne.setAvisAuNavPdf(panneDto.getAvisAuNavPdf());
         newPanne.setEmailDHOC(panneDto.getEmailDHOC());
         newPanne.setEmailDPDPM(panneDto.getEmailDPDPM());
         newPanne.setEmailDeclarant(panneDto.getEmailDeclarant());
+
         if (panneDto.getIdFeu() != null) {
             Feu feu = new Feu();
             feu.setId(panneDto.getIdFeu());
@@ -76,6 +73,8 @@ public class PanneMapper {
             province.setId(panneDto.getIdProvince());
             newPanne.setProvince(province);
         }
-    return newPanne;
+
+        return newPanne;
     }
+
 }

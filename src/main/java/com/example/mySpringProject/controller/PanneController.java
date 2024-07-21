@@ -5,8 +5,11 @@ package com.example.mySpringProject.controller;
 import com.example.mySpringProject.dto.PanneDto;
 import com.example.mySpringProject.model.Panne;
 
+import com.example.mySpringProject.model.User;
+import com.example.mySpringProject.repository.PanneRepository;
 import com.example.mySpringProject.service.PanneService;
 import lombok.AllArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +26,9 @@ import java.nio.file.Paths;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @AllArgsConstructor
 @RestController
@@ -31,49 +36,71 @@ import java.util.List;
 
 public class PanneController {
     private final PanneService panneService;
-    @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+    private final PanneRepository panneRepository;
+
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @PostMapping("/addPanne")
     public ResponseEntity<PanneDto> addFeu(@RequestBody PanneDto panne) {
         PanneDto savedPanne= panneService.addPanne(panne);
         return ResponseEntity.ok(savedPanne);
     }
 
-    @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @GetMapping("/pannes")
     public ResponseEntity<List<PanneDto>> getAllPannes() {
         List<PanneDto> pannes = panneService.getAllPannes();
         return  ResponseEntity.ok(pannes);
     }
-
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @PutMapping("/updatePanne/{id}")
     public ResponseEntity<Panne> updatePanne(@PathVariable("id") Integer id, @RequestBody Panne updatedPanne) {
         Panne panne= panneService.updatePanne(id, updatedPanne);
         return ResponseEntity.ok(panne);
     }
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+    @PutMapping("/panneReparee/{id}")
+    public ResponseEntity<Panne> reparerPanne(@PathVariable("id") Integer id, @RequestBody Panne updatedPanne) {
+        Panne panne= panneService.annoncerLaReparation(id, updatedPanne);
+        return ResponseEntity.ok(panne);
+    }
 
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @DeleteMapping("/deletePanne/{id}")
     public ResponseEntity<String> deletePanne(@PathVariable("id") Integer id) {
         panneService.deletePanne(id);
         return ResponseEntity.ok("Panne deleted");
 
     }
-
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @PutMapping("/panne/validate/{id}")
-    public Panne validatePanne(@PathVariable Integer id) {
-        return panneService.validatePanne(id);
+    public Panne validatePanne(@PathVariable Integer id, @RequestBody Map<String, String> requestBody) {
+        String emailDHOC = requestBody.get("emailDHOC");
+        return panneService.validatePanne(id, emailDHOC);
     }
+
 
     @PostMapping("/incrementOutOfServiceTime")
     public void incrementOutOfServiceTime() {
         panneService.incrementOutOfServiceTimeForAllPannes();
     }
 
+
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @GetMapping("/taux-disponibilite/{id}")
-    public ResponseEntity<Double> calculerTauxDisponibilite(@PathVariable Integer id) {
-        double tauxDisponibilite = panneService.calculerTauxDisponibilite(id);
-        return ResponseEntity.ok(tauxDisponibilite);
+    public ResponseEntity<Panne> calculerTauxDisponibilite(
+            @PathVariable Integer id,
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate) {
+        try {
+            double tauxDisponibilite = panneService.calculerTauxDisponibilite(id, startDate);
+            Panne updatedPanne = panneRepository.findById(id).orElseThrow(() -> new RuntimeException("Panne not found"));
+            return ResponseEntity.ok(updatedPanne);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
     }
 
+
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @PostMapping("/uploadAvis/{id}")
     public ResponseEntity<String> uploadAvis(@PathVariable Integer id, @RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
@@ -81,7 +108,6 @@ public class PanneController {
         }
 
         try {
-            // Enregistrer le fichier sur le serveur dans un dossier spécifique à la panne
             String fileName = saveFile(file, id);
             Panne updatedPanne = panneService.updateAvisPath(id, fileName);
             return new ResponseEntity<>("File uploaded successfully: " + fileName, HttpStatus.OK);
@@ -106,7 +132,7 @@ public class PanneController {
         return dest.getAbsolutePath();
     }
 
-
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @GetMapping("/avis/{id}")
     public ResponseEntity<Resource> getAvis(@PathVariable Integer id) {
         Panne panne = panneService.getPanneById(id);
@@ -127,4 +153,9 @@ public class PanneController {
         }
     }
 
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+    @GetMapping("pannes/region/{regionId}")
+    public List<Panne> getPannesParRegionEtProvince(@PathVariable Integer regionId ) {
+        return panneService.getPannesByRegion(regionId);
+    }
 }

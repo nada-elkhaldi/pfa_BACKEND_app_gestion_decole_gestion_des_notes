@@ -26,7 +26,7 @@ public class AuthenticationController {
 
     }
 
-    @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> createUser (@RequestBody  List<User> user) {
 
@@ -34,7 +34,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(response);
     }
 
-    @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(@RequestBody User user) {
         AuthenticationResponse response = authenticationService.authenticate(user);
@@ -47,49 +47,53 @@ public class AuthenticationController {
         return emailService.sendMail(email);
     }
 
-@GetMapping("{id}")
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+@GetMapping("/utilisateur/{id}")
     public ResponseEntity<User> getUserById(@PathVariable("id") Integer id) {
         return ResponseEntity.ok(authenticationService.getUserById(id));
 
     }
 
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+    @PutMapping("/updateUser/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable("id") Integer id, @RequestBody User updatedUser) {
+        User user= authenticationService.updateUser(id, updatedUser);
+        return ResponseEntity.ok(user);
+
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @GetMapping("/utilisateurs")
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = authenticationService.getAllUsers();
         return  ResponseEntity.ok(users);
     }
-
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @GetMapping("/utilisateursDPDPM")
     public ResponseEntity<List<User>> getAllDPDPMUsers() {
         List<User> users = authenticationService.getAllDPDPMs();
         return  ResponseEntity.ok(users);
     }
-
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @GetMapping("/utilisateursDHOC")
     public ResponseEntity<List<User>> getAllDHOCUsers() {
         List<User> users = authenticationService.getAllDHOCs();
         return  ResponseEntity.ok(users);
     }
-
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @GetMapping("/utilisateursDPE")
     public ResponseEntity<List<User>> getAllDPEUsers() {
         List<User> users = authenticationService.getAllDPEs();
         return  ResponseEntity.ok(users);
     }
-
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @GetMapping("/utilisateursAUTOPORT")
     public ResponseEntity<List<User>> getAllAUTOPORTUsers() {
         List<User> users = authenticationService.getAllAutoPorts();
         return  ResponseEntity.ok(users);
     }
 
-    @PutMapping("/updateUser/{id}")
-     public ResponseEntity<User> updateUser(@PathVariable("id") Integer id, @RequestBody User updatedUser) {
-       User user= authenticationService.updateUser(id, updatedUser);
-       return ResponseEntity.ok(user);
-
-     }
-
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
      @DeleteMapping("/deleteUser/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable("id") Integer id) {
           authenticationService.deleteUser(id);
@@ -99,7 +103,7 @@ public class AuthenticationController {
 
 
     //changemant du mot de passe
-    @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @PutMapping("/utilisateurs/{id}/motdepasse")
     public ResponseEntity<String> changerMotDePasse(@PathVariable Integer id, @RequestBody ChangePasswordRequest request) {
         String nouveauMotDePasse = request.getNewPassword();

@@ -46,6 +46,15 @@ public class PanneServiceImpl implements PanneService {
 
     @Override
     public PanneDto addPanne(PanneDto panneDto) {
+
+        if (panneDto.getIdFeu() == null || panneDto.getIdRegion() == null || panneDto.getIdProvince() == null) {
+            throw new IllegalArgumentException("Les identifiants ne doivent pas être nulls");
+        }
+        // Log des valeurs pour débogage
+        System.out.println("ID Feu: " + panneDto.getIdFeu());
+        System.out.println("ID Région: " + panneDto.getIdRegion());
+        System.out.println("ID Province: " + panneDto.getIdProvince());
+
         Panne newPanne = PanneMapper.mapToPanne(panneDto);
 
         Feu feu = feuRepository.findById(panneDto.getIdFeu())
@@ -67,7 +76,6 @@ public class PanneServiceImpl implements PanneService {
         StringBuilder emailBody = new StringBuilder();
         emailBody.append("Bonjour DPDPM,\n\n")
                 .append("Nous vous informons qu'une panne a été déclarée pour le phare suivant :\n\n")
-                .append("   - Type de déclaration : ").append(savedPanne.getTypeDeclaration()).append("\n")
                 .append("   - Nom du phare : ")
                 .append(savedPanne.getFeu().getNomLocalisation()).append(savedPanne.getFeu().getPosition()).append("\n")
                 .append("   - Région : ").append(savedPanne.getRegion().getNomRegion()).append("\n")
@@ -106,36 +114,31 @@ public class PanneServiceImpl implements PanneService {
         Panne panne = panneRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Panne with id " + id + " not found"));
 
-
-        if (!panne.getEtatGeneral().equals(request.getEtatGeneral())) {
-            if (request.getEtatGeneral().equals("remise en service")) {
-                panne.stopOutOfServiceTime();
-            }
-        }
-        panne.setNatureDePanne(request.getNatureDePanne());
-        panne.setDatePanne(request.getDatePanne());
         panne.setMotifDePanne(request.getMotifDePanne());
-        panne.setEmailDPDPM(request.getEmailDPDPM());
         panne.setPlanDAction(request.getPlanDAction());
         panne.setPrevisionDeResolution(request.getPrevisionDeResolution());
-        panne.setTauxDeDisponibilite(request.getTauxDeDisponibilite());
-        panne.setDateRemiseEnService(request.getDateRemiseEnService());
-        panne.setEtatFonctionnementDeFeuDeSecours(request.getEtatFonctionnementDeFeuDeSecours());
-        panne.setEtatGeneral(request.getEtatGeneral());
-        panne.setTypeDeclaration(request.getTypeDeclaration());
-        panne.setOutOfServiceTime(request.getOutOfServiceTime());
-        panne.setDateDebutService(request.getDateDebutService());
-        panne.setDateFinService(request.getDateFinService());
-        panne.setRapportPdf(request.getRapportPdf());
-        panne.setAvisAuNavPdf(request.getAvisAuNavPdf());
-        panne.setEmailDHOC(request.getEmailDHOC());
-        panne.setEmailDeclarant(request.getEmailDeclarant());
 
 
         Panne savedPanne = panneRepository.save(panne);
         return savedPanne;
     }
 
+    @Override
+    public Panne annoncerLaReparation(Integer id, Panne request) {
+        Panne panne = panneRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Panne with id " + id + " not found"));
+
+        if (!panne.getEtatGeneral().equals(request.getEtatGeneral())) {
+            if (request.getEtatGeneral().equals("Remise en service")) {
+                panne.stopOutOfServiceTime();
+            }
+        }
+        panne.setEtatGeneral(request.getEtatGeneral());
+        panne.setDateRemiseEnService(request.getDateRemiseEnService());
+        Panne savedPanne = panneRepository.save(panne);
+        return savedPanne;
+
+    }
 
     @Override
     public void deletePanne(Integer id) {
@@ -148,20 +151,21 @@ public class PanneServiceImpl implements PanneService {
     }
 
     @Override
-    public Panne validatePanne(Integer id) {
+    public Panne validatePanne(Integer id, String emailDHOC) {
         Panne panne = panneRepository.findById(id).orElseThrow(() -> new RuntimeException("Panne not found"));
-        panne.setEtatGeneral("hors service");
+        panne.setEtatGeneral("Hors service");
+
+        panne.setEmailDHOC(emailDHOC); // Assurez-vous que cette ligne met à jour l'email dans l'objet Panne
         panne.incrementOutOfServiceTime();
         panneRepository.save(panne);
 
         Email email = new Email();
-        email.setRecipient(panne.getEmailDHOC());
+        email.setRecipient(emailDHOC); // Utilisez l'email passé en paramètre
         email.setSubject("Notification de panne de phare");
 
         StringBuilder emailBody = new StringBuilder();
         emailBody.append("Bonjour DHOC,\n\n")
                 .append("Nous vous informons qu'une panne a été déclarée et validée pour le phare suivant :\n\n")
-                .append("   - Type de déclaration : ").append(panne.getTypeDeclaration()).append("\n")
                 .append("   - Nom du phare : ")
                 .append(panne.getFeu().getNomLocalisation()).append(panne.getFeu().getPosition()).append("\n")
                 .append("   - Région : ").append(panne.getRegion().getNomRegion()).append("\n")
@@ -180,6 +184,7 @@ public class PanneServiceImpl implements PanneService {
 
         return panne;
     }
+
 //    // Méthode pour suivre automatiquement les pannes et envoyer des alertes si nécessaire
 //    @Scheduled(fixedRate = 60000) // Exécuter toutes les 60 secondes (ajustez selon vos besoins)
 //    public void suivrePannes() {
@@ -222,7 +227,7 @@ public class PanneServiceImpl implements PanneService {
     //@Scheduled(fixedDelay = 15 * 24 * 60 * 60 * 1000) // Exécuter toutes les 15 jours
     //@Scheduled(fixedRate = 60000) // Exécuter toutes les 60 secondes (ajustez selon vos besoins)
     public void suivrePannes() {
-        List<Panne> pannes = panneRepository.findByEtatGeneral("hors service");
+        List<Panne> pannes = panneRepository.findByEtatGeneral("Hors service");
 
         for (Panne panne : pannes) {
             LocalDateTime now = LocalDateTime.now();
@@ -274,27 +279,35 @@ public class PanneServiceImpl implements PanneService {
         }
     }
 
-
     @Override
-    public double calculerTauxDisponibilite(Integer id) {
+    public double calculerTauxDisponibilite(Integer id, LocalDate startDate) {
         Panne panne = panneRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Panne not found"));
 
-        if (panne.getDateDebutService() == null || panne.getDatePanne() == null) {
-            throw new RuntimeException("Cannot calculate availability rate: missing start or end service dates.");
+        if (panne.getDatePanne() == null) {
+            throw new RuntimeException("Cannot calculate availability rate: missing end service date.");
         }
 
-        LocalDateTime dateDebutService = panne.getDateDebutService().atStartOfDay();
-        LocalDateTime dateFinService = panne.getDatePanne().atStartOfDay();
+        LocalDateTime dateDebutService = startDate.atStartOfDay();
+        LocalDateTime dateFinService = panne.getDatePanne().atStartOfDay();  // Convertir LocalDate en LocalDateTime
+
         Double outOfServiceTime = panne.getOutOfServiceTime();
-
+        // en minutes
         Duration serviceDuration = Duration.between(dateDebutService, dateFinService);
-        Double totalOutOfServiceTime = outOfServiceTime;
+        Double totalOutOfServiceTime = outOfServiceTime != null ? outOfServiceTime : 0;
 
-        double tauxDiso = ((Double) (serviceDuration.toMinutes() - totalOutOfServiceTime) / serviceDuration.toMinutes()) * 100;
+        if (serviceDuration.toMinutes() > 0) {
+            double tauxDiso = ((double) (serviceDuration.toMinutes() - totalOutOfServiceTime) / serviceDuration.toMinutes()) * 100;
+            panne.setTauxDeDisponibilite(tauxDiso);
+        } else {
+            panne.setTauxDeDisponibilite(100.0);
+        }
+        panneRepository.save(panne);
 
-        return tauxDiso;
+        return panne.getTauxDeDisponibilite();
     }
+
+
 
     @Override
     @Transactional
@@ -304,6 +317,13 @@ public class PanneServiceImpl implements PanneService {
         panne.setAvisAuNavPdf(avisPath);
         return panneRepository.save(panne);
     }
+
+
+    @Override
+    public List<Panne> getPannesByRegion(Integer regionId) {
+        return panneRepository.findPannesByRegionId(regionId);
+    }
+
 
 
 
@@ -328,6 +348,8 @@ public class PanneServiceImpl implements PanneService {
 //
 //        return availabilityRate;
 //    }
+
+
 
 
 }

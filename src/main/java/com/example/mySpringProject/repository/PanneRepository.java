@@ -2,10 +2,15 @@ package com.example.mySpringProject.repository;
 
 import com.example.mySpringProject.model.Panne;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
 public interface PanneRepository extends JpaRepository<Panne, Integer> {
 
     List<Panne> findByEtatGeneral(String etatGeneral);
+
+    @Query("SELECT p FROM Panne p WHERE p.region.id = :regionId")
+    List<Panne> findPannesByRegionId(@Param("regionId") Integer regionId);
 }

@@ -17,26 +17,28 @@ import java.util.List;
 public class RegionController {
 
     private final RegionService regionService;
-    @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @PostMapping("/addRegion")
     public ResponseEntity<RegionDto> addRegion(@RequestBody RegionDto regionDto) {
         RegionDto savedRegion= regionService.addRegion(regionDto);
         return ResponseEntity.ok(savedRegion);
     }
 
-    @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @GetMapping("/regions")
     public ResponseEntity<List<RegionDto>> getAllRegions() {
         List<RegionDto> regions = regionService.getAllRegions();
         return  ResponseEntity.ok(regions);
     }
 
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @PutMapping("/updateRegion/{id}")
     public ResponseEntity<Region> updateRegion(@PathVariable("id") Integer id, @RequestBody Region updatedRegion) {
         Region region= regionService.updateRegion(id, updatedRegion);
         return ResponseEntity.ok(region);
     }
 
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @DeleteMapping("/deleteRegion/{id}")
     public ResponseEntity<String> deleteRegion(@PathVariable("id") Integer id) {
         regionService.deleteRegion(id);

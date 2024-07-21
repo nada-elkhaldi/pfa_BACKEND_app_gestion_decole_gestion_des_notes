@@ -18,26 +18,26 @@ import java.util.List;
 public class FeuController {
 
     private final FeuService feuService;
-    @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @PostMapping("/addFeu")
     public ResponseEntity<FeuDto> addFeu(@RequestBody FeuDto feuDto) {
         FeuDto savedFeu= feuService.addFeu(feuDto);
         return ResponseEntity.ok(savedFeu);
     }
 
-    @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @GetMapping("/feux")
     public ResponseEntity<List<FeuDto>> getAllFeux() {
         List<FeuDto> feux = feuService.getAllFeux();
         return  ResponseEntity.ok(feux);
     }
-
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @PutMapping("/updateFeu/{id}")
     public ResponseEntity<Feu> updateFeu(@PathVariable("id") Integer id, @RequestBody Feu updatedFeu) {
         Feu feu= feuService.updateFeu(id, updatedFeu);
         return ResponseEntity.ok(feu);
     }
-
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @DeleteMapping("/deleteFeu/{id}")
     public ResponseEntity<String> deleteFeu(@PathVariable("id") Integer id) {
         feuService.deleteFeu(id);

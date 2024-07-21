@@ -92,14 +92,16 @@ public class CreditServiceImpl implements CreditService {
     @Transactional
     public Credit delegateCredit(Integer creditId, Double montant) {
         Credit credit = creditRepository.findById(creditId).orElseThrow(() -> new RuntimeException("Credit not found"));
+
+
         Budget budget = credit.getBudget();
         if (budget.getBudget() >= montant) {
             budget.setBudget(budget.getBudget() - montant);
         } else {
             throw new RuntimeException("Insufficient budget for " + budget.getPrevisionOperation());
         }
-
-        credit.setEtat("delegue");
+        credit.setMontant(montant);
+        credit.setEtat("Délégué");
         credit.setDateDelegation(LocalDate.now());
 
         budgetRepository.save(budget);
