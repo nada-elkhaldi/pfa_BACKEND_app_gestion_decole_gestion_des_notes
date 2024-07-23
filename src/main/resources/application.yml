@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/SMSMdb
+    url: jdbc:postgresql://localhost:5432/SMSMDB
     username: postgres
     password: nada1811
     driver-class-name: org.postgresql.Driver
