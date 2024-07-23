@@ -6,7 +6,9 @@ import com.example.mySpringProject.dto.FeuDto;
 import com.example.mySpringProject.model.Feu;
 
 import com.example.mySpringProject.service.FeuService;
+import com.example.mySpringProject.service.TauxDisponibiliteService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,5 +45,19 @@ public class FeuController {
         feuService.deleteFeu(id);
         return ResponseEntity.ok("Feu deleted");
 
+    }
+
+
+    @Autowired
+    private TauxDisponibiliteService tauxDisponibiliteService;
+
+    @PutMapping("/{id}/taux-disponibilite")
+    public ResponseEntity<Void> mettreAJourTauxDisponibilite(@PathVariable Integer id) {
+        try {
+            tauxDisponibiliteService.mettreAJourTauxDisponibilite(id);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

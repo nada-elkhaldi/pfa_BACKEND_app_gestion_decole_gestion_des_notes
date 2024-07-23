@@ -17,7 +17,10 @@ public class FeuMapper {
                 feu.getElevation(),
                 feu.getPortee(),
                 feu.getDescription(),
-                feu.getInfos()
+                feu.getInfos(),
+                feu.getEtatFonctionnement(),
+                feu.getPort(),
+                feu.getZone()
         );
     }
 
@@ -31,7 +34,10 @@ public class FeuMapper {
                 feuDto.getElevation(),
                 feuDto.getPortee(),
                 feuDto.getDescription(),
-                feuDto.getInfos()
+                feuDto.getInfos(),
+                feuDto.getEtatFonctionnement(),
+                feuDto.getPort(),
+                feuDto.getZone()
 
         );
     }

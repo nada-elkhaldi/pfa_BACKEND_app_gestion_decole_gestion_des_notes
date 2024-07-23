@@ -53,6 +53,9 @@ public class FeuServiceImpl implements FeuService {
         feu.setElevation(request.getElevation());
         feu.setPortee(request.getPortee());
         feu.setInfos(request.getInfos());
+        feu.setEtatFonctionnement(request.getEtatFonctionnement());
+        feu.setPort(request.getPort());
+        feu.setZone(request.getZone());
         Feu savedFeu = feuRepository.save(feu);
         return savedFeu;
     }

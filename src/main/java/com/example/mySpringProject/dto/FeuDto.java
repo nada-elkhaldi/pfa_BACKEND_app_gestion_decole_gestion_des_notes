@@ -17,10 +17,13 @@ public class FeuDto {
     private String portee;
     private String description;
     private String infos;
+    private String etatFonctionnement;
+    private String port;
+    private String zone;
 
     public FeuDto(){}
 
-    public FeuDto(Integer id, String numero, String nomLocalisation, String position, String caracteristiques, String elevation, String portee, String description, String infos) {
+    public FeuDto(Integer id, String numero, String nomLocalisation, String position, String caracteristiques, String elevation, String portee, String description, String infos, String etatFonctionnement, String port, String zone) {
         this.id = id;
         this.numero = numero;
         this.nomLocalisation = nomLocalisation;
@@ -30,5 +33,8 @@ public class FeuDto {
         this.portee = portee;
         this.description = description;
         this.infos = infos;
+        this.etatFonctionnement= etatFonctionnement;
+        this.port = port;
+        this.zone = zone;
     }
 }

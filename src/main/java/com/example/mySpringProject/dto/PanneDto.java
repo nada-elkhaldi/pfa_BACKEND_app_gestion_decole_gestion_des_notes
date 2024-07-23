@@ -14,7 +14,6 @@ import java.time.LocalDate;
 
 public class PanneDto {
     private Integer id;
-
     private String natureDePanne;
     private LocalDate datePanne;
     private String etatGeneral;
@@ -25,11 +24,11 @@ public class PanneDto {
     private LocalDate previsionDeResolution;
     private Double outOfServiceTime;
     private LocalDate dateDebutService;
-    private Double tauxDeDisponibilite;
     private String avisAuNavPdf;
-    private String emailDHOC;
-    private String emailDPDPM;
     private String emailDeclarant;
+
+    private Integer archive;
+    private Integer traitee;
 
     private Integer idFeu;
     private Integer idRegion;
@@ -38,7 +37,8 @@ public class PanneDto {
     private Region region;
     private Province province;
 
-    public PanneDto(Integer id, String natureDePanne, LocalDate datePanne, String etatGeneral, String etatFonctionnementDeFeuDeSecours, String motifDePanne, String planDAction, LocalDate dateRemiseEnService, LocalDate previsionDeResolution, Double outOfServiceTime, LocalDate dateDebutService, Double tauxDeDisponibilite, String avisAuNavPdf, String emailDHOC, String emailDPDPM, String emailDeclarant, Integer idFeu, Integer idRegion, Integer idProvince, Feu feu, Region region, Province province) {
+    // Assurez-vous que ce constructeur existe
+    public PanneDto(Integer id, String natureDePanne, LocalDate datePanne, String etatGeneral, String etatFonctionnementDeFeuDeSecours, String motifDePanne, String planDAction, LocalDate dateRemiseEnService, LocalDate previsionDeResolution, Double outOfServiceTime, LocalDate dateDebutService, String avisAuNavPdf, String emailDeclarant,Integer archive, Integer traitee, Integer idFeu, Integer idRegion, Integer idProvince, Feu feu, Region region, Province province) {
         this.id = id;
         this.natureDePanne = natureDePanne;
         this.datePanne = datePanne;
@@ -50,11 +50,10 @@ public class PanneDto {
         this.previsionDeResolution = previsionDeResolution;
         this.outOfServiceTime = outOfServiceTime;
         this.dateDebutService = dateDebutService;
-        this.tauxDeDisponibilite = tauxDeDisponibilite;
         this.avisAuNavPdf = avisAuNavPdf;
-        this.emailDHOC = emailDHOC;
-        this.emailDPDPM = emailDPDPM;
         this.emailDeclarant = emailDeclarant;
+        this.archive=archive;
+        this.traitee=traitee;
         this.idFeu = idFeu;
         this.idRegion = idRegion;
         this.idProvince = idProvince;
@@ -62,4 +61,6 @@ public class PanneDto {
         this.region = region;
         this.province = province;
     }
+
+
 }

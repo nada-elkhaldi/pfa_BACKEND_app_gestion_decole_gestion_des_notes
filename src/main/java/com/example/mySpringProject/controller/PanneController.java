@@ -8,7 +8,9 @@ import com.example.mySpringProject.model.Panne;
 import com.example.mySpringProject.model.User;
 import com.example.mySpringProject.repository.PanneRepository;
 import com.example.mySpringProject.service.PanneService;
+import com.example.mySpringProject.service.TauxDisponibiliteService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -31,16 +33,22 @@ import java.util.Map;
 @AllArgsConstructor
 @RestController
 @RequestMapping(value= "/api5",  method = {RequestMethod.POST,RequestMethod.GET,  RequestMethod.OPTIONS})
-
 public class PanneController {
     private final PanneService panneService;
     private final PanneRepository panneRepository;
 
+    @Autowired
+    private TauxDisponibiliteService tauxDisponibiliteService;
+
     @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @PostMapping("/addPanne")
-    public ResponseEntity<PanneDto> addFeu(@RequestBody PanneDto panne) {
-        PanneDto savedPanne= panneService.addPanne(panne);
-        return ResponseEntity.ok(savedPanne);
+    public ResponseEntity<PanneDto> addPanne(@RequestBody PanneDto panneDto, @RequestParam Integer userId) {
+        try {
+            PanneDto savedPanne = panneService.addPanne(panneDto, userId);
+            return ResponseEntity.ok(savedPanne);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
@@ -82,20 +90,20 @@ public class PanneController {
         panneService.incrementOutOfServiceTimeForAllPannes();
     }
 
-
-    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
-    @GetMapping("/taux-disponibilite/{id}")
-    public ResponseEntity<Panne> calculerTauxDisponibilite(
-            @PathVariable Integer id,
-            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate) {
-        try {
-            double tauxDisponibilite = panneService.calculerTauxDisponibilite(id, startDate);
-            Panne updatedPanne = panneRepository.findById(id).orElseThrow(() -> new RuntimeException("Panne not found"));
-            return ResponseEntity.ok(updatedPanne);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
-    }
+//
+//    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+//    @GetMapping("/taux-disponibilite/{id}")
+//    public ResponseEntity<Panne> calculerTauxDisponibilite(
+//            @PathVariable Integer id,
+//            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate) {
+//        try {
+//            double tauxDisponibilite = panneService.calculerTauxDisponibilite(id, startDate);
+//            Panne updatedPanne = panneRepository.findById(id).orElseThrow(() -> new RuntimeException("Panne not found"));
+//            return ResponseEntity.ok(updatedPanne);
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+//        }
+//    }
 
 
     @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
@@ -184,6 +192,28 @@ public class PanneController {
         headers.set(HttpHeaders.CONTENT_TYPE, "application/pdf");
 
         return new ResponseEntity<>(pdfReport, headers, HttpStatus.OK);
+    }
+
+
+    @GetMapping("/pas-traitees")
+    public ResponseEntity<List<Panne>> getPannesTraitees() {
+        List<Panne> pannes = panneService.getAllPannesTraitee();
+        return ResponseEntity.ok(pannes);
+    }
+
+    @GetMapping("/archivees")
+    public ResponseEntity<List<Panne>> getPannesArchivees() {
+        List<Panne> pannes = panneService.getAllPannesArchivee();
+        return ResponseEntity.ok(pannes);
+    }
+
+    //
+
+
+
+    @PostMapping("/taux-de-disponibilite/{idFeu}")
+    public void mettreAJourTauxDisponibilite(@PathVariable Integer idFeu) {
+        tauxDisponibiliteService.mettreAJourTauxDisponibilite(idFeu);
     }
 
 }

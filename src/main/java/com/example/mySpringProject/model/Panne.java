@@ -27,12 +27,11 @@ public class Panne {
     private LocalDate previsionDeResolution;
     private Double outOfServiceTime = 0.0;
     private LocalDate dateDebutService;
-    private Double tauxDeDisponibilite;
     private String avisAuNavPdf;
-    private String emailDHOC;
-    private String emailDPDPM;
     private String emailDeclarant;
 
+    private Integer archive;
+    private Integer traitee;
     @ManyToOne(optional = true)
     @JoinColumn(name = "idFeu")
     private Feu feu;
@@ -45,7 +44,6 @@ public class Panne {
     @JoinColumn(name = "idProvince")
     private Province province;
 
-    // Champs pour suivre les périodes hors service
     @Column(name = "out_of_service_start_time")
     private LocalDateTime outOfServiceStartTime;
 
@@ -57,7 +55,7 @@ public class Panne {
         this.outOfServiceTime = 0.0;
     }
 
-    public Panne(Integer id, String natureDePanne, LocalDate datePanne, String etatGeneral, String etatFonctionnementDeFeuDeSecours, String motifDePanne, String planDAction, LocalDate dateRemiseEnService, LocalDate previsionDeResolution, Double outOfServiceTime, LocalDate dateDebutService,   Double tauxDeDisponibilite, String avisAuNavPdf,   String emailDHOC, String emailDPDPM, String emailDeclarant, Feu feu, Region region, Province province) {
+    public Panne(Integer id, String natureDePanne, LocalDate datePanne, String etatGeneral, String etatFonctionnementDeFeuDeSecours, String motifDePanne, String planDAction, LocalDate dateRemiseEnService, LocalDate previsionDeResolution, Double outOfServiceTime, LocalDate dateDebutService, String avisAuNavPdf, String emailDeclarant, Feu feu, Region region, Province province) {
         this.id = id;
         this.natureDePanne = natureDePanne;
         this.datePanne = datePanne;
@@ -69,10 +67,7 @@ public class Panne {
         this.previsionDeResolution = previsionDeResolution;
         this.outOfServiceTime = (outOfServiceTime != null) ? outOfServiceTime : 0.0;
         this.dateDebutService = dateDebutService;
-        this.tauxDeDisponibilite = tauxDeDisponibilite;
         this.avisAuNavPdf = avisAuNavPdf;
-        this.emailDHOC = emailDHOC;
-        this.emailDPDPM = emailDPDPM;
         this.emailDeclarant = emailDeclarant;
         this.feu = feu;
         this.region = region;

@@ -1,5 +1,6 @@
 package com.example.mySpringProject.repository;
 
+import com.example.mySpringProject.model.Feu;
 import com.example.mySpringProject.model.Panne;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,4 +14,9 @@ public interface PanneRepository extends JpaRepository<Panne, Integer> {
 
     @Query("SELECT p FROM Panne p WHERE p.region.id = :regionId")
     List<Panne> findPannesByRegionId(@Param("regionId") Integer regionId);
+
+    List<Panne> findByTraitee(Integer traitee);
+    List<Panne> findByArchive(Integer archive);
+
+    List<Panne> findByFeu(Feu feu);
 }

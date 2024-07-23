@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface PanneService {
 
-    PanneDto addPanne(PanneDto panne);
+    PanneDto addPanne(PanneDto panne, Integer userId);
     List<PanneDto> getAllPannes();
     Panne getPanneById(Integer id);
     Panne updatePanne(Integer id, Panne panne);
@@ -21,7 +21,7 @@ public interface PanneService {
 
     void incrementOutOfServiceTimeForAllPannes();
 
-    double calculerTauxDisponibilite(Integer id, LocalDate dateDebut);
+    //double calculerTauxDisponibilite(Integer id, LocalDate dateDebut);
 
     //pieces jointes
     Panne updateAvisPath(Integer id, String avisPath);
@@ -30,4 +30,9 @@ public interface PanneService {
     List<Panne> findByIds(List<Integer> ids);
 
     byte[] generatePanneReport(List<Panne> pannes);
+
+    List<Panne> getAllPannesTraitee();
+    List<Panne> getAllPannesArchivee();
+
+
 }
