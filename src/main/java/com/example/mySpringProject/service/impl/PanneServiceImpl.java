@@ -10,6 +10,17 @@ import com.example.mySpringProject.repository.PanneRepository;
 import com.example.mySpringProject.repository.ProvinceRepository;
 import com.example.mySpringProject.repository.RegionRepository;
 import com.example.mySpringProject.service.PanneService;
+import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.UnitValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -18,7 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Period;
+
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -350,6 +362,77 @@ public class PanneServiceImpl implements PanneService {
 //    }
 
 
+    public byte[] generatePanneReport(List<Panne> pannes) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        PdfWriter writer = new PdfWriter(byteArrayOutputStream);
+        PdfDocument pdfDocument = new PdfDocument(writer);
+        Document document = new Document(pdfDocument, PageSize.A4);
 
+        try {
+            Paragraph title = new Paragraph("Rapport des Pannes")
+                    .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD))
+                    .setFontSize(18)
+                    .setTextAlignment(TextAlignment.CENTER)
+                    .setMarginBottom(20);
+            document.add(title);
+
+            // introduction
+            Paragraph introduction = new Paragraph("Ce rapport présente une vue d'ensemble des pannes enregistrées, y compris les détails de chaque panne, les temps d'indisponibilité, et les taux de disponibilité. Les données sont fournies pour une analyse approfondie des incidents survenus.")
+                    .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA))
+                    .setFontSize(12)
+                    .setMarginBottom(20);
+            document.add(introduction);
+
+             //creer un tableau
+            Table table = new Table(UnitValue.createPercentArray(new float[]{2,2,2, 3, 2,  3, 2, 2}));
+            table.setWidth(UnitValue.createPercentValue(100));
+
+             //defenir les colonnes
+            table.addHeaderCell("Phare");
+            table.addHeaderCell("Province");
+            table.addHeaderCell("Nature de la Panne");
+            table.addHeaderCell("Date de Panne");
+            table.addHeaderCell("État Général");
+
+            table.addHeaderCell("Date Remise en Service");
+
+            table.addHeaderCell("Temps Hors Service");
+            table.addHeaderCell("Taux de Disponibilité");
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+            // ajouter les données
+            for (Panne panne : pannes) {
+                table.addCell(panne.getFeu().getNomLocalisation() != null ? panne.getFeu().getNomLocalisation() : "");
+                table.addCell(panne.getProvince().getNomProvince() != null ? panne.getProvince().getNomProvince() : "");
+                table.addCell(panne.getNatureDePanne() != null ? panne.getNatureDePanne() : "");
+                table.addCell(panne.getDatePanne() != null ? panne.getDatePanne().format(formatter) : "");
+                table.addCell(panne.getEtatGeneral() != null ? panne.getEtatGeneral() : "");
+
+                table.addCell(panne.getDateRemiseEnService() != null ? panne.getDateRemiseEnService().format(formatter) : "");
+
+                // convertir en entier
+                double outOfServiceTimeDouble = panne.getOutOfServiceTime();
+                int outOfServiceTimeInt = (int) Math.round(outOfServiceTimeDouble);
+                table.addCell(String.valueOf(outOfServiceTimeInt));
+                //
+                double tauxDeDisponibilite = panne.getTauxDeDisponibilite();
+                table.addCell(String.format("%.2f", tauxDeDisponibilite));
+            }
+
+            document.add(table);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            document.close();
+        }
+
+        return byteArrayOutputStream.toByteArray();
+    }
+
+
+    public List<Panne> findByIds(List<Integer> ids) {
+        return panneRepository.findAllById(ids);
+    }
 
 }

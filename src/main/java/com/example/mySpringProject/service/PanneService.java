@@ -27,5 +27,7 @@ public interface PanneService {
     Panne updateAvisPath(Integer id, String avisPath);
 
     List<Panne> getPannesByRegion(Integer regionId);
+    List<Panne> findByIds(List<Integer> ids);
 
+    byte[] generatePanneReport(List<Panne> pannes);
 }

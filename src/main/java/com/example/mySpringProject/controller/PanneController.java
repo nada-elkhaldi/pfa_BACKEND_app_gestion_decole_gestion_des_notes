@@ -10,13 +10,11 @@ import com.example.mySpringProject.repository.PanneRepository;
 import com.example.mySpringProject.service.PanneService;
 import lombok.AllArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -158,4 +156,34 @@ public class PanneController {
     public List<Panne> getPannesParRegionEtProvince(@PathVariable Integer regionId ) {
         return panneService.getPannesByRegion(regionId);
     }
+
+//    @GetMapping("/pdf")
+//    public ResponseEntity<byte[]> generatePanneReport(@RequestParam List<Integer> panneIds) {
+//        List<Panne> pannes = panneService.findByIds(panneIds);
+//        byte[] pdfReport = panneService.generatePanneReport(pannes);
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_PDF);
+//        headers.setContentDispositionFormData("attachment", "panne_report.pdf");
+//
+//        return ResponseEntity.ok().headers(headers).body(pdfReport);
+//    }
+
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+    @PostMapping("/rapport-des-pannes")
+    public ResponseEntity<byte[]> generatePanneReport(@RequestBody List<Panne> pannes) {
+        // Log the received data
+        for (Panne panne : pannes) {
+            System.out.println("Received panne: " + panne);
+        }
+
+        byte[] pdfReport = panneService.generatePanneReport(pannes);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=panne_report.pdf");
+        headers.set(HttpHeaders.CONTENT_TYPE, "application/pdf");
+
+        return new ResponseEntity<>(pdfReport, headers, HttpStatus.OK);
+    }
+
 }
