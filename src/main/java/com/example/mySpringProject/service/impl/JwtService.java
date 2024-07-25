@@ -1,5 +1,7 @@
 package com.example.mySpringProject.service.impl;
 
+import com.example.mySpringProject.model.Privilege;
+import com.example.mySpringProject.model.Role;
 import com.example.mySpringProject.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -12,7 +14,9 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class JwtService {
@@ -57,8 +61,23 @@ public class JwtService {
         claims.put("nom", user.getLastName());
         claims.put("idUser", user.getId());
         claims.put("email", user.getEmail());
-        claims.put("role", user.getRole()); 
+        if (user.getRole() != null) {
+            Role role = user.getRole();
+            claims.put("role", role.getRoleName());
+
+            Set<String> privileges = role.getPrivileges().stream()
+                    .map(Privilege::getName)
+                    .collect(Collectors.toSet());
+            claims.put("privileges", privileges);
+        }
         //claims.put("password", user.getPassword());
+
+        if (user.getRegion() != null) {
+            claims.put("idRegion", user.getRegion().getId());
+        }
+        if (user.getProvince() != null) {
+            claims.put("idProvince", user.getProvince().getId());
+        }
 
         String token = Jwts
                 .builder()

@@ -11,15 +11,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl {
 
 
     private final UserRepository userRepository;
 
-    @Override
-    public UserDto createUser(UserDto userDto) {
-        User user = UserMapper.mapToUser(userDto);
-        User saveUser=userRepository.save(user);
-        return UserMapper.mapToUserDto(saveUser);
-    }
+
 }

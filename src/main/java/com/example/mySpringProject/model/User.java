@@ -10,6 +10,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Setter
 @Getter
@@ -29,9 +31,6 @@ public class User implements UserDetails {
     @Column(name="last_name")
     private String lastName;
 
-    @Column(name="region")
-    private String region;
-
     @Column(name="organisme")
     private String organisme;
 
@@ -43,35 +42,49 @@ public class User implements UserDetails {
     @Column(name="password")
     private String password;
 
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "idRegion")
+    private Region region;
 
-    @Enumerated(EnumType.STRING)
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "idProvince")
+    private Province province;
+
+
+    @ManyToOne
+    @JoinColumn(name = "role_id")
     private Role role;
 
 
 
 
-
-
-
-
-    public User(Integer id, String firstName, String lastName, String email, String region, String organisme, String password, Role role) {
+    public User(Integer id, String firstName, String lastName, String email, String organisme, String password, Role role, Region region, Province province) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.region = region;
         this.organisme = organisme;
         this.password = password;
         this.role = role;
+        this.region = region;
+        this.province = province;
     }
 
     public User() {
 
     }
 
+//    @Override
+//    public Collection<? extends GrantedAuthority> getAuthorities() {
+//        return List.of(new SimpleGrantedAuthority(role.name()));
+//    }
+
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+    public Set<? extends GrantedAuthority> getAuthorities() {
+        Set<Privilege> privileges = role.getPrivileges();
+        return privileges.stream()
+                .map(privilege -> new SimpleGrantedAuthority(privilege.getName()))
+                .collect(Collectors.toSet());
     }
 
     @Override

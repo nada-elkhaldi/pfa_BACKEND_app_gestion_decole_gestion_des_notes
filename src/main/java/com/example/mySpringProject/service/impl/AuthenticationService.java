@@ -4,6 +4,9 @@ package com.example.mySpringProject.service.impl;
 import com.example.mySpringProject.controller.PasswordGenerator;
 import com.example.mySpringProject.exception.ResourceNotFoundException;
 import com.example.mySpringProject.model.*;
+import com.example.mySpringProject.repository.ProvinceRepository;
+import com.example.mySpringProject.repository.RegionRepository;
+import com.example.mySpringProject.repository.RoleRepository;
 import com.example.mySpringProject.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,6 +23,10 @@ import java.util.stream.Collectors;
 public class AuthenticationService {
 
     private final UserRepository repository;
+    private final RegionRepository regionRepository;
+    private final ProvinceRepository provinceRepository;
+    private final RoleRepository roleRepository;
+
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final PasswordGenerator passwordGenerator;
@@ -29,13 +36,16 @@ public class AuthenticationService {
 
 
     @Autowired
-    public AuthenticationService(UserRepository repository,
+    public AuthenticationService(UserRepository repository, RegionRepository regionRepository, ProvinceRepository provinceRepository, RoleRepository roleRepository,
                                  JwtService jwtService,
                                  PasswordEncoder passwordEncoder,
                                  PasswordGenerator passwordGenerator,
                                  AuthenticationManager authenticationManager,
                                  EmailService emailService) {
         this.repository = repository;
+        this.regionRepository = regionRepository;
+        this.provinceRepository = provinceRepository;
+        this.roleRepository = roleRepository;
         this.jwtService = jwtService;
         this.passwordEncoder = passwordEncoder;
         this.passwordGenerator = passwordGenerator;
@@ -54,14 +64,24 @@ public class AuthenticationService {
                 throw new IllegalArgumentException("L'adresse email " + request.getEmail() + " existe déjà.");
             }
 
+            Region region =  regionRepository.findById(request.getRegion().getId())
+                    .orElseThrow(() -> new RuntimeException("Region not found"));
+            Province province = provinceRepository.findById(request.getProvince().getId())
+                    .orElseThrow(() -> new RuntimeException("Province not found"));
+
+            Role role = roleRepository.findById(request.getRole().getId())
+                    .orElseThrow(() -> new RuntimeException("Role not found"));
+
             User user = new User();
             user.setFirstName(request.getFirstName());
             user.setLastName(request.getLastName());
             user.setEmail(request.getEmail());
             String encryptedPassword = passwordGenerator.encryptPassword(request.getPassword());
             user.setPassword(encryptedPassword);
-            user.setRole(request.getRole());
-            repository.save(user);
+            user.setRole(role);
+            user.setOrganisme(request.getOrganisme());
+            user.setRegion(region);
+            user.setProvince(province);
 
             // Génération du jeton
             String token = jwtService.generateToken(user);
