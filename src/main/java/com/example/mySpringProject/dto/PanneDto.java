@@ -33,9 +33,11 @@ public class PanneDto {
     private Integer idFeu;
     private Integer idRegion;
     private Integer idProvince;
-    private Feu feu;
     private Region region;
     private Province province;
+    private Feu feu;
+
+
 
     // Assurez-vous que ce constructeur existe
     public PanneDto(Integer id, String natureDePanne, LocalDate datePanne, String etatGeneral, String etatFonctionnementDeFeuDeSecours, String motifDePanne, String planDAction, LocalDate dateRemiseEnService, LocalDate previsionDeResolution, Double outOfServiceTime, LocalDate dateDebutService, String avisAuNavPdf, String emailDeclarant,Integer archive, Integer traitee, Integer idFeu, Integer idRegion, Integer idProvince, Feu feu, Region region, Province province) {
@@ -56,7 +58,7 @@ public class PanneDto {
         this.traitee=traitee;
         this.idFeu = idFeu;
         this.idRegion = idRegion;
-        this.idProvince = idProvince;
+        this.idProvince = idRegion;
         this.feu = feu;
         this.region = region;
         this.province = province;

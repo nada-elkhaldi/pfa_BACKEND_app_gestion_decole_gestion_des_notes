@@ -19,10 +19,12 @@ public class Budget {
     @Column(name="id")
     private Integer id;
     private String annee;
-    private Double budget;
+    private Double montantTotal;
+    private Double montantUtilise;
+    private Double montantDisponible;
 
     @Enumerated(EnumType.STRING)
-    private PrevisionOperation previsionOperation;
+    private Categorie categorie;
 
 
     @ManyToOne(optional = true)

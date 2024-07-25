@@ -12,4 +12,6 @@ public interface FeuService {
     Feu getFeuById(Integer id);
     Feu updateFeu(Integer id, Feu feu);
     void deleteFeu(Integer id);
+
+    List<FeuDto> getFeuxByRegionAndProvince(Integer idRegion, Integer idProvince);
 }

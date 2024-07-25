@@ -39,6 +39,7 @@ public class FeuController {
         Feu feu= feuService.updateFeu(id, updatedFeu);
         return ResponseEntity.ok(feu);
     }
+
     @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @DeleteMapping("/deleteFeu/{id}")
     public ResponseEntity<String> deleteFeu(@PathVariable("id") Integer id) {
@@ -47,17 +48,11 @@ public class FeuController {
 
     }
 
-
-    @Autowired
-    private TauxDisponibiliteService tauxDisponibiliteService;
-
-    @PutMapping("/{id}/taux-disponibilite")
-    public ResponseEntity<Void> mettreAJourTauxDisponibilite(@PathVariable Integer id) {
-        try {
-            tauxDisponibiliteService.mettreAJourTauxDisponibilite(id);
-            return ResponseEntity.ok().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+    @GetMapping("/feux/by-region-and-province")
+    public List<FeuDto> getFeuxByRegionAndProvince(
+            @RequestParam Integer idRegion,
+            @RequestParam Integer idProvince) {
+        return feuService.getFeuxByRegionAndProvince(idRegion, idProvince);
     }
+
 }

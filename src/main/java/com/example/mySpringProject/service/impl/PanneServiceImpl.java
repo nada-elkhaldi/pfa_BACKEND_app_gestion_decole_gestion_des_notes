@@ -128,7 +128,7 @@ public class PanneServiceImpl implements PanneService {
         //
 
         // Appeler le service pour mettre à jour le taux de disponibilité pour le phare associé
-        tauxDisponibiliteService.mettreAJourTauxDisponibilite(savedPanne.getFeu().getId());
+        tauxDisponibiliteService.mettreAJourTauxDisponibilitePourTousLesPhares();
 
         return PanneMapper.mapToPanDto(savedPanne);
     }

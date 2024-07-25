@@ -5,9 +5,7 @@ import com.example.mySpringProject.dto.CreditDto;
 import com.example.mySpringProject.exception.ResourceNotFoundException;
 import com.example.mySpringProject.mapper.CreditMapper;
 import com.example.mySpringProject.model.*;
-import com.example.mySpringProject.repository.BudgetRepository;
-import com.example.mySpringProject.repository.CreditRepository;
-import com.example.mySpringProject.repository.FeuRepository;
+import com.example.mySpringProject.repository.*;
 import com.example.mySpringProject.service.CreditService;
 import com.example.mySpringProject.service.FeuService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,16 +24,20 @@ public class CreditServiceImpl implements CreditService {
     private final FeuService feuService;
     private final FeuRepository feuRepository;
     private final EmailService emailService;
+    private final UserRepository userRepository;
+    private final PanneRepository panneRepository;
 
 
     @Autowired
-    public CreditServiceImpl(BudgetRepository budgetRepository, CreditRepository creditRepository, FeuService feuService, FeuRepository feuRepository, EmailService emailService) {
+    public CreditServiceImpl(BudgetRepository budgetRepository, CreditRepository creditRepository, FeuService feuService, FeuRepository feuRepository, EmailService emailService, UserRepository userRepository, PanneRepository panneRepository) {
         this.budgetRepository = budgetRepository;
         this.creditRepository = creditRepository;
 
         this.feuService = feuService;
         this.feuRepository = feuRepository;
         this.emailService = emailService;
+        this.userRepository = userRepository;
+        this.panneRepository = panneRepository;
     }
 
 
@@ -44,23 +46,25 @@ public class CreditServiceImpl implements CreditService {
          Credit credit = CreditMapper.mapToCredit(creditDto);
         Feu feu = feuRepository.findById(creditDto.getIdFeu())
                 .orElseThrow(() -> new RuntimeException("Feu not found"));
-        Budget budget = budgetRepository.findById(creditDto.getIdBudget())
-                .orElseThrow(() -> new RuntimeException("Budget not found"));
-
+        User demandeur = userRepository.findById(creditDto.getIdDemandeur())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Panne panne = panneRepository.findById(creditDto.getIdPanne())
+                .orElseThrow(() -> new RuntimeException("Panne not found"));
         credit.setFeu(feu);
-        credit.setBudget(budget);
+        credit.setDemandeur(demandeur);
+        credit.setPanne(panne);
         Credit savedCredit= creditRepository.save(credit);
         Email email = new Email();
-        email.setRecipient(savedCredit.getEmailDPDPM());
+        email.setRecipient("elkhaldinada05@gmail.com");
         email.setSubject("Notification de Délégation de Crédit");
 
         StringBuilder emailBody = new StringBuilder();
         emailBody.append("Bonjour DPDPM,\n\n")
                 .append("Nous vous informons qu'un crédit doit être délégué pour procéder à la résolution de la panne pré-mentionnée. Voici les informations nécessaires :\n\n")
-                .append("   - Nature de crédit : ").append(savedCredit.getNatureCredit()).append("\n")
+
                 .append("   - Nom du phare : ")
                 .append(savedCredit.getFeu().getNomLocalisation()).append(" (Position : ").append(savedCredit.getFeu().getPosition()).append(")\n")
-                .append("   - Montant : ").append(savedCredit.getMontant()).append(" MAD\n\n")
+                .append("   - Montant : ").append(savedCredit.getMontantDemande()).append(" MAD\n\n")
                 .append("   - Date de demande : ").append(savedCredit.getDateDemande()).append("\n\n")
                 .append("Veuillez prendre les mesures nécessaires pour finaliser cette délégation de crédit.\n\n")
                 .append("Cordialement,\n")
@@ -88,25 +92,6 @@ public class CreditServiceImpl implements CreditService {
                 .orElseThrow(()-> new ResourceNotFoundException("Credit with id " + id + " not found"));
     }
 
-    @Override
-    @Transactional
-    public Credit delegateCredit(Integer creditId, Double montant) {
-        Credit credit = creditRepository.findById(creditId).orElseThrow(() -> new RuntimeException("Credit not found"));
-
-
-        Budget budget = credit.getBudget();
-        if (budget.getBudget() >= montant) {
-            budget.setBudget(budget.getBudget() - montant);
-        } else {
-            throw new RuntimeException("Insufficient budget for " + budget.getPrevisionOperation());
-        }
-        credit.setMontant(montant);
-        credit.setEtat("Délégué");
-        credit.setDateDelegation(LocalDate.now());
-
-        budgetRepository.save(budget);
-        return creditRepository.save(credit);
-    }
 
 
     @Override
@@ -116,4 +101,25 @@ public class CreditServiceImpl implements CreditService {
         );
         creditRepository.deleteById(id);
     }
+
+
+//    @Override
+//    @Transactional
+//    public Credit delegateCredit(Integer creditId, Double montant) {
+//        Credit credit = creditRepository.findById(creditId).orElseThrow(() -> new RuntimeException("Credit not found"));
+//
+//
+//        Budget budget = credit.getBudget();
+//        if (budget.getBudget() >= montant) {
+//            budget.setBudget(budget.getBudget() - montant);
+//        } else {
+//            throw new RuntimeException("Insufficient budget for " + budget.getPrevisionOperation());
+//        }
+//        credit.setMontant(montant);
+//        credit.setEtat("Délégué");
+//        credit.setDateDelegation(LocalDate.now());
+//
+//        budgetRepository.save(budget);
+//        return creditRepository.save(credit);
+//    }
 }

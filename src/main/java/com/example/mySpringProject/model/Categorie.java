@@ -2,7 +2,7 @@ package com.example.mySpringProject.model;
 
 
 
-    public enum PrevisionOperation {
+    public enum Categorie {
         TRAVAUX_AMENAGEMENT,
         CONTRAT_MAINTENANCE,
         ENTRETIEN,

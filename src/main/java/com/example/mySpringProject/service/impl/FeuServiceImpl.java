@@ -4,7 +4,11 @@ import com.example.mySpringProject.dto.FeuDto;
 import com.example.mySpringProject.exception.ResourceNotFoundException;
 import com.example.mySpringProject.mapper.FeuMapper;
 import com.example.mySpringProject.model.Feu;
+import com.example.mySpringProject.model.Province;
+import com.example.mySpringProject.model.Region;
 import com.example.mySpringProject.repository.FeuRepository;
+import com.example.mySpringProject.repository.ProvinceRepository;
+import com.example.mySpringProject.repository.RegionRepository;
 import com.example.mySpringProject.service.FeuService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,11 +21,22 @@ import java.util.stream.Collectors;
 public class FeuServiceImpl implements FeuService {
 
 
+    private final RegionRepository regionRepository;
+    private final ProvinceRepository provinceRepository;
     private FeuRepository feuRepository;
     private FeuMapper feuMapper;
     @Override
     public FeuDto addFeu(FeuDto feuDto) {
+
         Feu feu = FeuMapper.mapToFeu(feuDto);
+        Region region = regionRepository.findById(feuDto.getIdRegion())
+                .orElseThrow(() -> new RuntimeException("Region not found"));
+        Province province = provinceRepository.findById(feuDto.getIdProvince())
+                .orElseThrow(() -> new RuntimeException("Province not found"));
+
+        feu.setRegion(region);
+        feu.setProvince(province);
+
         Feu savedFeu = feuRepository.save(feu);
         return FeuMapper.mapToFeuDto(savedFeu);
     }
@@ -66,5 +81,13 @@ public class FeuServiceImpl implements FeuService {
                 ()-> new ResourceNotFoundException("Feu with id " + id + " not found")
         );
         feuRepository.deleteById(id);
+    }
+
+    @Override
+    public List<FeuDto> getFeuxByRegionAndProvince(Integer idRegion, Integer idProvince) {
+        List<Feu> feux = feuRepository.findByRegionIdAndProvinceId(idRegion, idProvince);
+        return feux.stream()
+                .map(FeuMapper::mapToFeuDto)
+                .collect(Collectors.toList());
     }
 }

@@ -20,7 +20,11 @@ public class FeuMapper {
                 feu.getInfos(),
                 feu.getEtatFonctionnement(),
                 feu.getPort(),
-                feu.getZone()
+                feu.getZone(),
+                feu.getRegion() != null ? feu.getRegion().getId() : null,
+                feu.getProvince() != null ? feu.getProvince().getId() : null,
+                feu.getRegion(),
+                feu.getProvince()
         );
     }
 
@@ -37,7 +41,9 @@ public class FeuMapper {
                 feuDto.getInfos(),
                 feuDto.getEtatFonctionnement(),
                 feuDto.getPort(),
-                feuDto.getZone()
+                feuDto.getZone(),
+                feuDto.getRegion(),
+                feuDto.getProvince()
 
         );
     }

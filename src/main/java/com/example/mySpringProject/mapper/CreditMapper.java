@@ -2,9 +2,7 @@ package com.example.mySpringProject.mapper;
 
 
 import com.example.mySpringProject.dto.CreditDto;
-import com.example.mySpringProject.model.Budget;
-import com.example.mySpringProject.model.Credit;
-import com.example.mySpringProject.model.Feu;
+import com.example.mySpringProject.model.*;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -13,15 +11,12 @@ public class CreditMapper {
     public static CreditDto mapToCreditDto(Credit credit) {
         return new CreditDto(
                 credit.getId(),
-                credit.getEmailDPDPM(),
-                credit.getNatureCredit(),
-                credit.getDetail(),
-                credit.getMontant(),
+                credit.getMontantDemande(),
                 credit.getDateDemande(),
-                credit.getDateDelegation(),
                 credit.getEtat(),
                 credit.getFeu() != null ? credit.getFeu().getId() : null,
-                credit.getBudget() != null ? credit.getBudget().getId() : null
+                credit.getDemandeur() != null ? credit.getDemandeur().getId() : null,
+                credit.getPanne() != null ? credit.getPanne().getId() : null
 
         );
     }
@@ -29,26 +24,28 @@ public class CreditMapper {
     public static Credit mapToCredit(CreditDto creditDto) {
         Credit credit= new Credit();
         credit.setId(creditDto.getId());
-        credit.setEmailDPDPM(creditDto.getEmailDPDPM());
-        credit.setNatureCredit(creditDto.getNatureCredit());
-        credit.setDetail(creditDto.getDetail());
-        credit.setMontant(creditDto.getMontant());
+        credit.setMontantDemande(creditDto.getMontantDemande());
         credit.setDateDemande(creditDto.getDateDemande());
-        credit.setDateDelegation(creditDto.getDateDelegation());
-        credit.setEtat(creditDto.getEtat());
+         credit.setEtat(creditDto.getEtat());
         if (creditDto.getIdFeu() != null) {
             Feu feu = new Feu();
             feu.setId(creditDto.getIdFeu());
             credit.setFeu(feu);
         }
 
-        if (creditDto.getIdBudget() != null) {
-            Budget budget = new Budget();
-            budget.setId(creditDto.getIdBudget());
-            credit.setBudget(budget);
+
+        if (creditDto.getIdDemandeur() != null) {
+            User demandeur = new User();
+            demandeur.setId(creditDto.getIdDemandeur());
+            credit.setDemandeur(demandeur);
         }
 
 
+        if (creditDto.getIdPanne() != null) {
+            Panne panne = new Panne();
+            panne.setId(creditDto.getIdPanne());
+            credit.setPanne(panne);
+        }
         return credit;
 
     }

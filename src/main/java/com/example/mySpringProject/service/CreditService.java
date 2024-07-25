@@ -10,6 +10,5 @@ public interface CreditService {
     CreditDto demanderCredit(CreditDto creditDto);
     List<CreditDto> getCredits();
     Credit getCreditById(Integer id);
-    Credit delegateCredit(Integer creditId, Double montant);
     void deleteCredit(Integer id);
 }

@@ -13,26 +13,22 @@ import java.time.LocalDate;
 public class CreditDto {
 
     private Integer id;
-    private String emailDPDPM;
-    private String natureCredit;
-    private String detail;
-    private Double montant;
+    private Double montantDemande;
     private LocalDate dateDemande;
-    private LocalDate dateDelegation;
     private String etat;
     private Integer idFeu;
-   private Integer idBudget;
+    private Integer idDemandeur;
+    private Integer idPanne;
 
-    public CreditDto(Integer id, String emailDPDPM ,String natureCredit, String detail, Double montant, LocalDate dateDemande, LocalDate dateDelegation, String etat, Integer idFeu, Integer idBudget) {
+
+    public CreditDto(Integer id, Double montant, LocalDate dateDemande, String etat, Integer idFeu, Integer idDemandeur, Integer idPanne) {
         this.id = id;
-        this.emailDPDPM = emailDPDPM;
-        this.natureCredit = natureCredit;
-        this.detail = detail;
-        this.montant = montant;
+        this.montantDemande = montant;
         this.dateDemande = dateDemande;
-        this.dateDelegation = dateDelegation;
         this.etat = etat;
         this.idFeu = idFeu;
-        this.idBudget = idBudget;
+        this.idDemandeur = idDemandeur;
+        this.idPanne = idPanne;
+
     }
 }

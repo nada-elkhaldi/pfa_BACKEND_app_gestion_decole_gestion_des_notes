@@ -3,7 +3,6 @@ package com.example.mySpringProject.service.impl;
 import com.example.mySpringProject.model.Budget;
 import com.example.mySpringProject.model.Province;
 import com.example.mySpringProject.model.Region;
-import com.example.mySpringProject.model.User;
 import com.example.mySpringProject.repository.BudgetRepository;
 import com.example.mySpringProject.repository.ProvinceRepository;
 import com.example.mySpringProject.repository.RegionRepository;
@@ -38,10 +37,12 @@ public class BudgetServiceImpl implements BudgetService {
         Province province = provinceRepository.findById(request.getProvince().getId())
                 .orElseThrow(() -> new RuntimeException("Province not found"));
         budget.setAnnee(request.getAnnee());
-        budget.setBudget(request.getBudget());
+        budget.setMontantTotal(request.getMontantTotal());
+        budget.setMontantUtilise(request.getMontantUtilise());
+        budget.setMontantDisponible(request.getMontantDisponible());
         budget.setRegion(region);
         budget.setProvince(province);
-        budget.setPrevisionOperation(request.getPrevisionOperation());
+        budget.setCategorie(request.getCategorie());
       Budget savedBudget= budgetRepository.save(budget);
 
       return savedBudget;

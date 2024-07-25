@@ -11,41 +11,41 @@ import java.time.LocalDate;
 @Getter
 @Entity
 
-@Table(name= "credits")
+@Table(name= "demande_credits")
 public class Credit {
 
     @Id
     @GeneratedValue
     @Column(name="id")
     private Integer id;
-    private String natureCredit;
-    private String detail;
-    private Double montant;
+
+    private Double montantDemande;
 
     private LocalDate dateDemande;
-    private LocalDate dateDelegation;
     private String etat;
-    private String emailDPDPM;
 
     @ManyToOne(optional = true)
     @JoinColumn(name = "idFeu")
     private Feu feu;
 
     @ManyToOne(optional = true)
-    @JoinColumn(name = "idBudget")
-    private Budget budget;
+    @JoinColumn(name = "idUser")
+    private User demandeur;
 
-    public Credit(Integer id,String emailDPDPM, String natureCredit, String detail, Double montant, LocalDate dateDemande, LocalDate dateDelegation, String etat, Feu feu, Budget budget) {
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "idPanne")
+    private Panne panne;
+
+
+    public Credit(Integer id,  LocalDate dateDemande, Double montantDemande, String etat, Feu feu, User user, Panne panne) {
         this.id = id;
-        this.emailDPDPM = emailDPDPM;
-        this.natureCredit = natureCredit;
-        this.detail = detail;
-        this.montant = montant;
         this.dateDemande = dateDemande;
-        this.dateDelegation = dateDelegation;
+        this.montantDemande = montantDemande;
         this.etat = etat;
         this.feu = feu;
-        this.budget = budget;
+        this.demandeur = user;
+        this.panne = panne;
+
     }
 
     public Credit() {

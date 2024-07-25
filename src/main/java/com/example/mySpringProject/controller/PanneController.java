@@ -5,6 +5,7 @@ package com.example.mySpringProject.controller;
 import com.example.mySpringProject.dto.PanneDto;
 import com.example.mySpringProject.model.Panne;
 
+import com.example.mySpringProject.model.TauDisposability;
 import com.example.mySpringProject.model.User;
 import com.example.mySpringProject.repository.PanneRepository;
 import com.example.mySpringProject.service.PanneService;
@@ -161,7 +162,7 @@ public class PanneController {
 
     @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @GetMapping("pannes/region/{regionId}")
-    public List<Panne> getPannesParRegionEtProvince(@PathVariable Integer regionId ) {
+    public List<Panne> getPannesParRegion(@PathVariable Integer regionId ) {
         return panneService.getPannesByRegion(regionId);
     }
 
@@ -208,12 +209,14 @@ public class PanneController {
     }
 
     //
+    @PostMapping("/taux-de-disponibilite")
+    public void mettreAJourTauxDisponibilitePourTousLesPhares() {
+        tauxDisponibiliteService.mettreAJourTauxDisponibilitePourTousLesPhares();
+    }
 
-
-
-    @PostMapping("/taux-de-disponibilite/{idFeu}")
-    public void mettreAJourTauxDisponibilite(@PathVariable Integer idFeu) {
-        tauxDisponibiliteService.mettreAJourTauxDisponibilite(idFeu);
+    @GetMapping("/ESMs/taux-de-disponibilite")
+    public List<TauDisposability> obtenirTousLesTauxDisponibilite() {
+        return tauxDisponibiliteService.obtenirTousLesTauxDisponibilite();
     }
 
 }

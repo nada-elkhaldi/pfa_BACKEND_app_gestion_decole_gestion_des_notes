@@ -20,63 +20,79 @@ import java.util.List;
 public class TauxDisponibiliteServiceImpl implements TauxDisponibiliteService {
 
 
-    @Autowired
-    private PanneRepository panneRepository;
+
+    private final PanneRepository panneRepository;
+
+    private final TauxDisponibiliteRepository tauxDisponibiliteRepository;
+
+    private final FeuRepository feuRepository;
 
     @Autowired
-    private TauxDisponibiliteRepository tauxDisponibiliteRepository;
-
-    @Autowired
-    private FeuRepository feuRepository;
+    public TauxDisponibiliteServiceImpl(PanneRepository panneRepository, TauxDisponibiliteRepository tauxDisponibiliteRepository, FeuRepository feuRepository) {
+        this.panneRepository = panneRepository;
+        this.tauxDisponibiliteRepository = tauxDisponibiliteRepository;
+        this.feuRepository = feuRepository;
+    }
 
 
     @Override
-    public void mettreAJourTauxDisponibilite(Integer idFeu) {
-        System.out.println("Tentative de mise à jour du taux de disponibilité pour le feu avec ID: " + idFeu);
+    public void mettreAJourTauxDisponibilitePourTousLesPhares() {
+        System.out.println("Tentative de mise à jour du taux de disponibilité pour tous les phares");
+        List<Feu> tousLesPhares = feuRepository.findAll();
 
-        Feu feu = feuRepository.findById(idFeu)
-                .orElseThrow(() -> {
-                    System.err.println("Feu avec ID " + idFeu + " non trouvé");
-                    return new RuntimeException("Feu not found");
-                });
+        for (Feu feu : tousLesPhares) {
+            System.out.println("Traitement du feu avec ID: " + feu.getId());
 
-        LocalDateTime startDate = LocalDateTime.of(LocalDate.now().getYear(), 1, 1, 0, 0);
-        LocalDateTime endDate = LocalDateTime.now();
+            LocalDateTime startDate = LocalDateTime.of(LocalDate.now().getYear(), 1, 1, 0, 0);
+            LocalDateTime endDate = LocalDateTime.now();
+            //
+            List<Panne> pannes = panneRepository.findByFeu(feu);
 
-        List<Panne> pannes = panneRepository.findByFeu(feu);
+            double totalOutOfServiceTime = 0;
+            boolean hasPanne = false;
 
-        double totalOutOfServiceTime = 0;
-        boolean hasPanne = false;
+            for (Panne panne : pannes) {
+                if ("Hors service".equals(panne.getEtatGeneral())) {
+                    hasPanne = true;
+                    totalOutOfServiceTime += panne.getOutOfServiceTime() != null ? panne.getOutOfServiceTime() : 0;
 
-        for (Panne panne : pannes) {
-            if ("Hors service".equals(panne.getEtatGeneral())) {
-                hasPanne = true;
-                totalOutOfServiceTime += panne.getOutOfServiceTime() != null ? panne.getOutOfServiceTime() : 0;
-
-                if (endDate.isBefore(panne.getDatePanne().atStartOfDay())) {
-                    endDate = panne.getDatePanne().atStartOfDay();
+                    if (endDate.isBefore(panne.getDatePanne().atStartOfDay())) {
+                        endDate = panne.getDatePanne().atStartOfDay();
+                    }
                 }
             }
-        }
-        double tauxDiso;
-        if (hasPanne) {
-            Duration serviceDuration = Duration.between(startDate, endDate);
-            tauxDiso = ((double) (serviceDuration.toMinutes() - totalOutOfServiceTime) / serviceDuration.toMinutes()) * 100;
-        } else {
-            tauxDiso = 100.0;
+
+            double tauxDiso;
+            if (hasPanne) {
+                Duration serviceDuration = Duration.between(startDate, endDate);
+                tauxDiso = ((double) (serviceDuration.toMinutes() - totalOutOfServiceTime) / serviceDuration.toMinutes()) * 100;
+            } else {
+                tauxDiso = 100.0;
+            }
+
+            // Trouver ou créer le taux de disponibilité pour le phare
+            TauDisposability tauxDisponibilite = tauxDisponibiliteRepository.findByFeu(feu);
+            if (tauxDisponibilite == null) {
+                tauxDisponibilite = new TauDisposability();
+                tauxDisponibilite.setFeu(feu);
+            }
+            tauxDisponibilite.setTauxCalcule(tauxDiso);
+            tauxDisponibilite.setStartDate(startDate.toLocalDate());
+            tauxDisponibilite.setEndDate(endDate.toLocalDate());
+            tauxDisponibilite.setOutOfServiceTime(totalOutOfServiceTime);
+
+            // Sauvegarder ou mettre à jour le taux de disponibilité
+            tauxDisponibiliteRepository.save(tauxDisponibilite);
+
+            System.out.println("Taux de disponibilité mis à jour pour le feu avec ID: " + feu.getId());
         }
 
-        TauDisposability tauxDisponibilite = tauxDisponibiliteRepository.findByFeu(feu);
-        if (tauxDisponibilite == null) {
-            tauxDisponibilite = new TauDisposability();
-            tauxDisponibilite.setFeu(feu);
-        }
-        tauxDisponibilite.setTauxCalcule(tauxDiso);
-        tauxDisponibilite.setStartDate(startDate.toLocalDate());
-        tauxDisponibilite.setEndDate(endDate.toLocalDate());
-        tauxDisponibilite.setOutOfServiceTime(totalOutOfServiceTime);
+        System.out.println("Mise à jour du taux de disponibilité terminée pour tous les phares");
+    }
 
-        tauxDisponibiliteRepository.save(tauxDisponibilite);
+    @Override
+    public List<TauDisposability> obtenirTousLesTauxDisponibilite() {
+        return tauxDisponibiliteRepository.findAll();
     }
 
     @Override

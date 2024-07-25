@@ -8,6 +8,6 @@ public interface InterventionService {
     Intervention addIntervention(Intervention intervention);
     List<Intervention> getAllInterventions();
     Intervention getInterventionById(Integer id);
-    Intervention updateIntervention(Intervention intervention);
+    Intervention updateIntervention(Intervention intervention, Integer id);
     void deleteIntervention(Integer id);
 }
