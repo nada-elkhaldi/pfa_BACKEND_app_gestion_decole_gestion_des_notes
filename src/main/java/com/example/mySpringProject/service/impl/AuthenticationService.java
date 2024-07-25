@@ -93,7 +93,7 @@ public class AuthenticationService {
             email.setSubject("Informations sur votre compte");
 
             StringBuilder emailBody = new StringBuilder();
-            emailBody.append("Bonjour ").append(user.getRole()).append(",\n\n")
+            emailBody.append("Bonjour ").append(user.getRole().getRoleName()).append(",\n\n")
                     .append("Nous sommes heureux de vous accueillir dans notre système.\n\n")
                     .append("Voici vos informations de connexion :\n")
                     .append("   - Adresse email : ").append(user.getEmail()).append("\n")
