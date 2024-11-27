@@ -24,6 +24,8 @@ public class Credit {
     private LocalDate dateDemande;
     private String etat;
 
+    private String motif;
+
     @ManyToOne(optional = true)
     @JoinColumn(name = "idFeu")
     private Feu feu;
@@ -37,11 +39,12 @@ public class Credit {
     private Panne panne;
 
 
-    public Credit(Integer id,  LocalDate dateDemande, Double montantDemande, String etat, Feu feu, User user, Panne panne) {
+    public Credit(Integer id,  LocalDate dateDemande, Double montantDemande, String etat, String motif , Feu feu, User user, Panne panne) {
         this.id = id;
         this.dateDemande = dateDemande;
         this.montantDemande = montantDemande;
         this.etat = etat;
+        this.motif = motif;
         this.feu = feu;
         this.demandeur = user;
         this.panne = panne;

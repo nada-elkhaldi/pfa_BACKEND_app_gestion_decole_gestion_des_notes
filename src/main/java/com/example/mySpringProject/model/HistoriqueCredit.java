@@ -24,11 +24,13 @@ public class HistoriqueCredit {
     private LocalDate dateDelegation;
 
     @ManyToOne(optional = true)
+    @JoinColumn(name = "idBudget")
+    private Budget budget;
+
+    @ManyToOne(optional = true)
     @JoinColumn(name = "idDemande")
     private Credit creditDemande;
 
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "idBudget")
-    private Budget budget;
+
 
 }

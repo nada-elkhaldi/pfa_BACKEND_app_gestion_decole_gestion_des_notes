@@ -21,11 +21,11 @@ public class TauDisposability {
     @ManyToOne
     @JoinColumn(name = "feu_id")
     private Feu feu;
-
+    private double outOfServiceTime;
     private double tauxCalcule;
     private LocalDate startDate;
     private LocalDate endDate;
-    private double outOfServiceTime;
+
 
 
 }

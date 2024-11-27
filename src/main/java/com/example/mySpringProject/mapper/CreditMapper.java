@@ -5,6 +5,8 @@ import com.example.mySpringProject.dto.CreditDto;
 import com.example.mySpringProject.model.*;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+
 @Component
 public class CreditMapper {
 
@@ -14,9 +16,13 @@ public class CreditMapper {
                 credit.getMontantDemande(),
                 credit.getDateDemande(),
                 credit.getEtat(),
+                credit.getMotif(),
                 credit.getFeu() != null ? credit.getFeu().getId() : null,
                 credit.getDemandeur() != null ? credit.getDemandeur().getId() : null,
-                credit.getPanne() != null ? credit.getPanne().getId() : null
+                credit.getPanne() != null ? credit.getPanne().getId() : null,
+                credit.getFeu(),
+                credit.getDemandeur(),
+                credit.getPanne()
 
         );
     }
@@ -25,8 +31,9 @@ public class CreditMapper {
         Credit credit= new Credit();
         credit.setId(creditDto.getId());
         credit.setMontantDemande(creditDto.getMontantDemande());
-        credit.setDateDemande(creditDto.getDateDemande());
-         credit.setEtat(creditDto.getEtat());
+        credit.setDateDemande(LocalDate.now());
+         credit.setEtat("Pas Délégué");
+         credit.setMotif(creditDto.getMotif());
         if (creditDto.getIdFeu() != null) {
             Feu feu = new Feu();
             feu.setId(creditDto.getIdFeu());

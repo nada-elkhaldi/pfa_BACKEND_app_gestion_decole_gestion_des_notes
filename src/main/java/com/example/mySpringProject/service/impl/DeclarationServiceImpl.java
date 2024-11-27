@@ -36,6 +36,7 @@ public class DeclarationServiceImpl implements DeclarationService {
         declaration1.setDeclarant(declarant);
         declaration1.setTyeDeclaration(request.getTyeDeclaration());
         declaration1.setDateDeclaration(LocalDate.now());
+        declaration1.setEtat("En attente..");
         declarationRepository.save(declaration1);
         return declaration1;
     }

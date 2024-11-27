@@ -5,6 +5,7 @@ import com.example.mySpringProject.model.*;
 
 import com.example.mySpringProject.service.impl.AuthenticationService;
 import com.example.mySpringProject.service.impl.EmailService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,9 +29,11 @@ public class AuthenticationController {
 
     @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> createUser (@RequestBody  List<User> user) {
+    public ResponseEntity<AuthenticationResponse> createUser(
+            @RequestBody List<User> user,
+            @RequestParam(value = "isActive", defaultValue = "false") boolean isActive) {
 
-        AuthenticationResponse response = authenticationService.createUser(user);
+        AuthenticationResponse response = authenticationService.createUser(user,isActive);
         return ResponseEntity.ok(response);
     }
 
@@ -86,6 +89,14 @@ public class AuthenticationController {
         List<User> users = authenticationService.getAllDPEs();
         return  ResponseEntity.ok(users);
     }
+
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+    @GetMapping("/utilisateursDRE")
+    public ResponseEntity<List<User>> getAllDREUsers() {
+        List<User> users = authenticationService.getAllDRE();
+        return  ResponseEntity.ok(users);
+    }
+
     @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @GetMapping("/utilisateursAUTOPORT")
     public ResponseEntity<List<User>> getAllAUTOPORTUsers() {
@@ -113,6 +124,42 @@ public class AuthenticationController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+    @PostMapping("/deactivate/{userId}")
+    public void deactivateUser(@PathVariable Integer userId) {
+        authenticationService.deactivateUser(userId);
+    }
+
+
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+    @PostMapping("/activate/{userId}")
+    public ResponseEntity<String> activateUser(@PathVariable Integer userId) {
+        try {
+            authenticationService.activateUser(userId);
+            return ResponseEntity.ok("Utilisateur activé avec succès.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de l'activation de l'utilisateur.");
+        }
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+    @GetMapping("/inactive")
+    public ResponseEntity<List<User>> getAllInactiveUsers() {
+        List<User> inactiveUsers = authenticationService.getAllInactiveUsers();
+        if (inactiveUsers.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(inactiveUsers);
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+    @GetMapping("/users-count")
+    public long getUserCount() {
+        return authenticationService.getUserCount();
     }
     }
 

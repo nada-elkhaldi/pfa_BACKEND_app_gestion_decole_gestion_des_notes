@@ -4,7 +4,9 @@ import com.example.mySpringProject.dto.ProvinceDto;
 import com.example.mySpringProject.exception.ResourceNotFoundException;
 import com.example.mySpringProject.mapper.ProvinceMapper;
 import com.example.mySpringProject.model.Province;
+import com.example.mySpringProject.model.Region;
 import com.example.mySpringProject.repository.ProvinceRepository;
+import com.example.mySpringProject.repository.RegionRepository;
 import com.example.mySpringProject.service.ProvinceService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,10 +21,15 @@ public class ProvinceServiceImpl implements ProvinceService
 
     private ProvinceRepository  provinceRepository;
     private ProvinceMapper provinceMapper;
+    private RegionRepository regionRepository;
 
     @Override
     public ProvinceDto addProvince(ProvinceDto provinceDto) {
         Province province = ProvinceMapper.mapToProvince(provinceDto);
+        Region region = regionRepository.findById(provinceDto.getRegion().getId())
+                .orElseThrow(() -> new RuntimeException("Region not found"));
+
+        province.setRegion(region);
         Province savedProvince = provinceRepository.save(province);
         return ProvinceMapper.mapToProvinceDto(savedProvince);
     }

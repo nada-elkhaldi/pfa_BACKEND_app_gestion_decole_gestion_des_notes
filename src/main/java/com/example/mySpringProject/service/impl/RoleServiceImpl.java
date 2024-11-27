@@ -1,6 +1,8 @@
 package com.example.mySpringProject.service.impl;
 
+import com.example.mySpringProject.exception.ResourceNotFoundException;
 import com.example.mySpringProject.model.Privilege;
+import com.example.mySpringProject.model.Region;
 import com.example.mySpringProject.model.Role;
 import com.example.mySpringProject.repository.PrivilegeRepository;
 import com.example.mySpringProject.repository.RoleRepository;
@@ -41,8 +43,10 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public Role addPrivilegesToRole(Integer roleId, List<Integer> privilegeIds) {
+
         Role role = roleRepository.findById(roleId)
                 .orElseThrow(() -> new IllegalArgumentException("Role with ID " + roleId + " does not exist."));
+
 
         List<Privilege> privileges = privilegeIds.stream()
                 .map(id -> privilegeRepository.findById(id)
@@ -54,8 +58,32 @@ public class RoleServiceImpl implements RoleService {
         return roleRepository.save(role);
     }
 
+
     @Override
     public List<Role> getAllRoles() {
         return roleRepository.findAll();
+    }
+
+    @Override
+    public Role updateRole(Role request, Integer id) {
+        Role role = roleRepository
+                .findById(id).orElseThrow(
+                ()-> new ResourceNotFoundException("Role with id " + id + " not found")
+        );
+        role.setRoleName(request.getRoleName());
+
+        Role savedRole = roleRepository.save(role);
+        return savedRole;
+    }
+
+    @Override
+    public void deleteRole(Integer roleId) {
+
+        Role role = roleRepository
+                .findById(roleId).orElseThrow(
+                        ()-> new ResourceNotFoundException("Role with id " + roleId + " not found")
+                );
+
+        roleRepository.deleteById(roleId);
     }
 }

@@ -32,16 +32,16 @@ public class BudgetServiceImpl implements BudgetService {
     public Budget addBudget(Budget request) {
        Budget budget = new Budget();
 
-        Region region = regionRepository.findById(request.getRegion().getId())
-                .orElseThrow(() -> new RuntimeException("Region not found"));
-        Province province = provinceRepository.findById(request.getProvince().getId())
-                .orElseThrow(() -> new RuntimeException("Province not found"));
+//        Region region = regionRepository.findById(request.getRegion().getId())
+//                .orElseThrow(() -> new RuntimeException("Region not found"));
+//        Province province = provinceRepository.findById(request.getProvince().getId())
+//                .orElseThrow(() -> new RuntimeException("Province not found"));
         budget.setAnnee(request.getAnnee());
         budget.setMontantTotal(request.getMontantTotal());
-        budget.setMontantUtilise(request.getMontantUtilise());
-        budget.setMontantDisponible(request.getMontantDisponible());
-        budget.setRegion(region);
-        budget.setProvince(province);
+        budget.setMontantUtilise(0.0);
+        budget.setMontantDisponible(request.getMontantTotal());
+//        budget.setRegion(region);
+//        budget.setProvince(province);
         budget.setCategorie(request.getCategorie());
       Budget savedBudget= budgetRepository.save(budget);
 

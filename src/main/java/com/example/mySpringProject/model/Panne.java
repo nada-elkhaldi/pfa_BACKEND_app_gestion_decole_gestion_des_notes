@@ -37,10 +37,6 @@ public class Panne {
     private Feu feu;
 
     @ManyToOne(optional = true)
-    @JoinColumn(name = "idRegion")
-    private Region region;
-
-    @ManyToOne(optional = true)
     @JoinColumn(name = "idProvince")
     private Province province;
 
@@ -55,7 +51,7 @@ public class Panne {
         this.outOfServiceTime = 0.0;
     }
 
-    public Panne(Integer id, String natureDePanne, LocalDate datePanne, String etatGeneral, String etatFonctionnementDeFeuDeSecours, String motifDePanne, String planDAction, LocalDate dateRemiseEnService, LocalDate previsionDeResolution, Double outOfServiceTime, LocalDate dateDebutService, String avisAuNavPdf, String emailDeclarant, Feu feu, Region region, Province province) {
+    public Panne(Integer id, String natureDePanne, LocalDate datePanne, String etatGeneral, String etatFonctionnementDeFeuDeSecours, String motifDePanne, String planDAction, LocalDate dateRemiseEnService, LocalDate previsionDeResolution, Double outOfServiceTime, LocalDate dateDebutService, String avisAuNavPdf, String emailDeclarant, Feu feu, Province province) {
         this.id = id;
         this.natureDePanne = natureDePanne;
         this.datePanne = datePanne;
@@ -70,7 +66,7 @@ public class Panne {
         this.avisAuNavPdf = avisAuNavPdf;
         this.emailDeclarant = emailDeclarant;
         this.feu = feu;
-        this.region = region;
+
         this.province = province;
     }
 

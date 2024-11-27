@@ -9,9 +9,9 @@ import java.util.List;
 
 public interface FeuRepository extends JpaRepository<Feu, Integer> {
 
-    List<Feu> findByRegionIdAndProvinceId(Integer idRegion, Integer idProvince);
-    @Query("SELECT f FROM Feu f WHERE f.region.id = :idRegion AND f.province.id = :idProvince")
-    List<Feu> findFeuxByRegionAndProvince(
-            @Param("idRegion") Integer idRegion,
+    List<Feu> findByProvinceId( Integer idProvince);
+    @Query("SELECT f FROM Feu f WHERE f.province.id = :idProvince")
+    List<Feu> findFeuxByProvince(
+
             @Param("idProvince") Integer idProvince);
 }

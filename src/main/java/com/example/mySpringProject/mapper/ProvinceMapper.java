@@ -12,7 +12,9 @@ public class ProvinceMapper {
     public static ProvinceDto mapToProvinceDto(Province province) {
         return new ProvinceDto(
                 province.getId(),
-                province.getNomProvince()
+                province.getNomProvince(),
+                province.getRegion()
+
         );
 
     }
@@ -20,7 +22,8 @@ public class ProvinceMapper {
     public static Province mapToProvince(ProvinceDto provinceDto) {
         return new Province(
                 provinceDto.getId(),
-                provinceDto.getNomProvince()
+                provinceDto.getNomProvince(),
+                provinceDto.getRegion()
         );
     }
 

@@ -8,4 +8,6 @@ public interface HistoriqueCreditService  {
 
     List<HistoriqueCredit> getAllHistoriqueCredit();
     void delegateCredit(Integer idDemande, Integer idBudget);
+
+    Double getTotalCreditDelegue();
 }

@@ -70,4 +70,9 @@ public class HistoriqueCreditServiceImpl implements HistoriqueCreditService {
 
         historiqueCreditRepository.save(historiqueCredit);
     }
+
+    @Override
+    public Double getTotalCreditDelegue() {
+        return historiqueCreditRepository.getTotalCreditDelegue();
+    }
 }

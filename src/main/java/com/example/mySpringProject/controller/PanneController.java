@@ -28,6 +28,7 @@ import java.nio.file.Paths;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -43,9 +44,13 @@ public class PanneController {
 
     @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @PostMapping("/addPanne")
-    public ResponseEntity<PanneDto> addPanne(@RequestBody PanneDto panneDto, @RequestParam Integer userId) {
+    public ResponseEntity<PanneDto> addPanne(
+            @RequestBody PanneDto panneDto,
+            @RequestParam Integer userId,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate) {
         try {
-            PanneDto savedPanne = panneService.addPanne(panneDto, userId);
+            PanneDto savedPanne = panneService.addPanne(panneDto, userId, startDate, endDate);
             return ResponseEntity.ok(savedPanne);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
@@ -80,9 +85,9 @@ public class PanneController {
     }
     @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @PutMapping("/panne/validate/{id}")
-    public Panne validatePanne(@PathVariable Integer id, @RequestBody Map<String, String> requestBody) {
-        String emailDHOC = requestBody.get("emailDHOC");
-        return panneService.validatePanne(id, emailDHOC);
+    public Panne validatePanne(@PathVariable Integer id) {
+
+        return panneService.validatePanne(id);
     }
 
 
@@ -161,22 +166,11 @@ public class PanneController {
     }
 
     @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
-    @GetMapping("pannes/region/{regionId}")
+    @GetMapping("/pannes/region/{regionId}")
     public List<Panne> getPannesParRegion(@PathVariable Integer regionId ) {
         return panneService.getPannesByRegion(regionId);
     }
 
-//    @GetMapping("/pdf")
-//    public ResponseEntity<byte[]> generatePanneReport(@RequestParam List<Integer> panneIds) {
-//        List<Panne> pannes = panneService.findByIds(panneIds);
-//        byte[] pdfReport = panneService.generatePanneReport(pannes);
-//
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.APPLICATION_PDF);
-//        headers.setContentDispositionFormData("attachment", "panne_report.pdf");
-//
-//        return ResponseEntity.ok().headers(headers).body(pdfReport);
-//    }
 
     @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @PostMapping("/rapport-des-pannes")
@@ -195,13 +189,23 @@ public class PanneController {
         return new ResponseEntity<>(pdfReport, headers, HttpStatus.OK);
     }
 
-
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @GetMapping("/pas-traitees")
+    public ResponseEntity<List<Panne>> getPannesPasTraitees() {
+        List<Panne> pannes = panneService.getAllPannesPasTraitee();
+        return ResponseEntity.ok(pannes);
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+    @GetMapping("/pannes-traitees")
     public ResponseEntity<List<Panne>> getPannesTraitees() {
         List<Panne> pannes = panneService.getAllPannesTraitee();
         return ResponseEntity.ok(pannes);
     }
 
+
+
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @GetMapping("/archivees")
     public ResponseEntity<List<Panne>> getPannesArchivees() {
         List<Panne> pannes = panneService.getAllPannesArchivee();
@@ -209,14 +213,41 @@ public class PanneController {
     }
 
     //
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @PostMapping("/taux-de-disponibilite")
-    public void mettreAJourTauxDisponibilitePourTousLesPhares() {
-        tauxDisponibiliteService.mettreAJourTauxDisponibilitePourTousLesPhares();
-    }
+    public ResponseEntity<String> mettreAJourTauxDisponibilite(
+            @RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate) {
 
+        try {
+            tauxDisponibiliteService.mettreAJourTauxDisponibilitePourTousLesPhares(startDate, endDate);
+            return ResponseEntity.ok("Taux de disponibilité mis à jour avec succès.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de la mise à jour du taux de disponibilité.");
+        }
+    }
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @GetMapping("/ESMs/taux-de-disponibilite")
     public List<TauDisposability> obtenirTousLesTauxDisponibilite() {
         return tauxDisponibiliteService.obtenirTousLesTauxDisponibilite();
     }
 
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+    @GetMapping("/taux-disponibilite/region/{regionId}")
+    public List<TauDisposability> getTauxDisponibiliteByRegionId(@PathVariable Integer regionId) {
+        return tauxDisponibiliteService.getTauxDisponibiliteByRegionId(regionId);
+    }
+
+
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+    @GetMapping("/pannes-count")
+    public long getPannesCount() {
+        return panneService.getPannesCount();
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+    @GetMapping("/pannes-non-traitees/count")
+    public long getNonTraiteesCount() {
+        return panneService.getNonTraiteesCount();
+    }
 }

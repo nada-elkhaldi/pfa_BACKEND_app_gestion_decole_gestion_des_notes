@@ -27,10 +27,10 @@ public class PanneMapper {
                 panne.getArchive(),
                 panne.getTraitee(),
                 panne.getFeu() != null ? panne.getFeu().getId() : null,
-                panne.getRegion() != null ? panne.getRegion().getId() : null,
+
                 panne.getProvince() != null ? panne.getProvince().getId() : null,
                 panne.getFeu(),
-                panne.getRegion(),
+
                 panne.getProvince()
         );
     }
@@ -59,11 +59,7 @@ public class PanneMapper {
             newPanne.setFeu(feu);
         }
 
-        if (panneDto.getIdRegion() != null) {
-            Region region = new Region();
-            region.setId(panneDto.getIdRegion());
-            newPanne.setRegion(region);
-        }
+
 
         if (panneDto.getIdProvince() != null) {
             Province province = new Province();

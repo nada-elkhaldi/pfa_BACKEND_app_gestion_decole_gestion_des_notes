@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,41 +43,96 @@ public class CreditServiceImpl implements CreditService {
 
 
     @Override
-    public CreditDto demanderCredit(CreditDto creditDto) {
+    public CreditDto demanderCreditPanne(CreditDto creditDto) {
          Credit credit = CreditMapper.mapToCredit(creditDto);
-        Feu feu = feuRepository.findById(creditDto.getIdFeu())
-                .orElseThrow(() -> new RuntimeException("Feu not found"));
+
         User demandeur = userRepository.findById(creditDto.getIdDemandeur())
                 .orElseThrow(() -> new RuntimeException("User not found"));
         Panne panne = panneRepository.findById(creditDto.getIdPanne())
                 .orElseThrow(() -> new RuntimeException("Panne not found"));
-        credit.setFeu(feu);
+
         credit.setDemandeur(demandeur);
         credit.setPanne(panne);
         Credit savedCredit= creditRepository.save(credit);
-        Email email = new Email();
-        email.setRecipient("elkhaldinada05@gmail.com");
-        email.setSubject("Notification de Délégation de Crédit");
 
-        StringBuilder emailBody = new StringBuilder();
-        emailBody.append("Bonjour DPDPM,\n\n")
-                .append("Nous vous informons qu'un crédit doit être délégué pour procéder à la résolution de la panne pré-mentionnée. Voici les informations nécessaires :\n\n")
+        List<String> roles = Arrays.asList("DPDPM", "DPDPM-User");
+        List<User> dpdpmUsers = userRepository.findByRole_NameIn(roles);
 
-                .append("   - Nom du phare : ")
-                .append(savedCredit.getFeu().getNomLocalisation()).append(" (Position : ").append(savedCredit.getFeu().getPosition()).append(")\n")
-                .append("   - Montant : ").append(savedCredit.getMontantDemande()).append(" MAD\n\n")
-                .append("   - Date de demande : ").append(savedCredit.getDateDemande()).append("\n\n")
-                .append("Veuillez prendre les mesures nécessaires pour finaliser cette délégation de crédit.\n\n")
-                .append("Cordialement,\n")
-                .append("L'équipe de gestion des feux");
+        for (User user : dpdpmUsers) {
+            Email email = new Email();
+            email.setRecipient(user.getEmail());
+            email.setSubject("Notification de Délégation de Crédit");
 
-        email.setBody(emailBody.toString());
-        String result = emailService.sendMail(email);
-        if (!result.equals("Email sent")) {
-            throw new RuntimeException("Une erreur s'est produite lors de l'envoi de l'e-mail.");
+            StringBuilder emailBody = new StringBuilder();
+            emailBody.append("<html>")
+                    .append("<head><meta charset=\"UTF-8\"></head>")
+                    .append("<body>")
+                    .append("<p>Bonjour DPDPM,</p>")
+                    .append("<p>Nous vous informons qu'un crédit doit être délégué pour procéder à la résolution de la panne pré-mentionnée. Voici les informations nécessaires :</p>")
+                    .append("<ul>")
+                    .append("<li><strong>Nom du phare :</strong> ").append(savedCredit.getPanne().getFeu().getNomLocalisation())
+                    .append(" (Position : ").append(savedCredit.getPanne().getFeu().getPosition()).append(")</li>")
+                    .append("<li><strong>Montant :</strong> ").append(savedCredit.getMontantDemande()).append(" MAD</li>")
+                    .append("<li><strong>Date de demande :</strong> ").append(savedCredit.getDateDemande()).append("</li>")
+                    .append("</ul>")
+                    .append("<p>Veuillez prendre les mesures nécessaires pour finaliser cette délégation de crédit.</p>")
+                    .append("<p>Cordialement,</p>")
+                    .append("<p>L'équipe de gestion des feux</p>")
+                    .append("</body>")
+                    .append("</html>");
+
+
+            email.setBody(emailBody.toString());
+            String result = emailService.sendMail(email);
+            if (!result.equals("Email sent")) {
+                throw new RuntimeException("Une erreur s'est produite lors de l'envoi de l'e-mail.");
+            }
         }
+
         return CreditMapper.mapToCreditDto(savedCredit);
 
+    }
+
+    @Override
+    public CreditDto demanderCredit(CreditDto creditDto) {
+        Credit credit = CreditMapper.mapToCredit(creditDto);
+
+        User demandeur = userRepository.findById(creditDto.getIdDemandeur())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Feu feu = feuRepository.findById(creditDto.getIdFeu())
+                .orElseThrow(() -> new RuntimeException("Feu not found"));
+
+        credit.setDemandeur(demandeur);
+        credit.setFeu(feu);
+        Credit savedCredit= creditRepository.save(credit);
+
+        List<String> roles = Arrays.asList("DPDPM", "DPDPM-User");
+        List<User> dpdpmUsers = userRepository.findByRole_NameIn(roles);
+
+        for (User user : dpdpmUsers) {
+            Email email = new Email();
+            email.setRecipient(user.getEmail());
+            email.setSubject("Notification de Délégation de Crédit");
+
+            StringBuilder emailBody = new StringBuilder();
+            emailBody.append("<p>Bonjour DPDPM,</p>")
+                    .append("<p>Nous vous informons qu'un crédit doit être délégué pour procéder à la résolution de la panne pré-mentionnée. Voici les informations nécessaires :</p>")
+                    .append("<ul>")
+                    .append("<li><strong>Nom du phare :</strong> ").append(savedCredit.getFeu().getNomLocalisation()).append(" (Position : ").append(savedCredit.getFeu().getPosition()).append(")</li>")
+                    .append("<li><strong>Montant :</strong> ").append(savedCredit.getMontantDemande()).append(" MAD</li>")
+                    .append("<li><strong>Date de demande :</strong> ").append(savedCredit.getDateDemande()).append("</li>")
+                    .append("</ul>")
+                    .append("<p>Veuillez prendre les mesures nécessaires pour finaliser cette délégation de crédit.</p>")
+                    .append("<p>Cordialement,<br/>")
+                    .append("L'équipe de gestion des feux</p>");
+
+            email.setBody(emailBody.toString());
+            String result = emailService.sendMail(email);
+            if (!result.equals("Email sent")) {
+                throw new RuntimeException("Une erreur s'est produite lors de l'envoi de l'e-mail.");
+            }
+        }
+        return CreditMapper.mapToCreditDto(savedCredit);
     }
 
     @Override
@@ -102,6 +158,16 @@ public class CreditServiceImpl implements CreditService {
         creditRepository.deleteById(id);
     }
 
+    @Override
+    public List<Credit> findCreditsByUserId(Integer userId) {
+        return creditRepository.findCreditsByUserId(userId);
+    }
+
+    @Override
+    public Double getTotalMontantDemande() {
+        return creditRepository.getTotalMontantDemande();
+    }
+
 
 //    @Override
 //    @Transactional
@@ -122,4 +188,7 @@ public class CreditServiceImpl implements CreditService {
 //        budgetRepository.save(budget);
 //        return creditRepository.save(credit);
 //    }
+
+
+
 }

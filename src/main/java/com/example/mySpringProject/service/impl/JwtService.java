@@ -59,10 +59,12 @@ public class JwtService {
         Map<String, Object> claims = new HashMap<>();
         claims.put("prenom", user.getFirstName());
         claims.put("nom", user.getLastName());
+        claims.put("organisme", user.getOrganisme());
         claims.put("idUser", user.getId());
         claims.put("email", user.getEmail());
         if (user.getRole() != null) {
             Role role = user.getRole();
+            claims.put("idRole", user.getRole().getId());
             claims.put("role", role.getRoleName());
 
             Set<String> privileges = role.getPrivileges().stream()
@@ -72,8 +74,8 @@ public class JwtService {
         }
         //claims.put("password", user.getPassword());
 
-        if (user.getRegion() != null) {
-            claims.put("idRegion", user.getRegion().getId());
+        if (user.getProvince().getRegion() != null) {
+            claims.put("idRegion", user.getProvince().getRegion().getId());
         }
         if (user.getProvince() != null) {
             claims.put("idProvince", user.getProvince().getId());

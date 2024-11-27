@@ -12,11 +12,15 @@ public interface PanneRepository extends JpaRepository<Panne, Integer> {
 
     List<Panne> findByEtatGeneral(String etatGeneral);
 
-    @Query("SELECT p FROM Panne p WHERE p.region.id = :regionId")
+    @Query("SELECT p FROM Panne p WHERE p.province.region.id = :regionId")
     List<Panne> findPannesByRegionId(@Param("regionId") Integer regionId);
 
     List<Panne> findByTraitee(Integer traitee);
     List<Panne> findByArchive(Integer archive);
 
     List<Panne> findByFeu(Feu feu);
+
+    long count();
+
+    long countByTraitee(Integer traitee);
 }

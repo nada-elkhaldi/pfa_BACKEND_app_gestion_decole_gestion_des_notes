@@ -27,11 +27,11 @@ public class Budget {
     private Categorie categorie;
 
 
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "idRegion")
-    private Region region;
-
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "idProvince")
-    private Province province;
+//    @ManyToOne(optional = true)
+//    @JoinColumn(name = "idRegion")
+//    private Region region;
+//
+//    @ManyToOne(optional = true)
+//    @JoinColumn(name = "idProvince")
+//    private Province province;
 }

@@ -23,6 +23,7 @@ public class Declaration {
     private Integer id;
     private LocalDate dateDeclaration;
     private String tyeDeclaration;
+    private String etat;
     @ManyToOne
     @JoinColumn(name = "id_panne")
     private Panne panne;

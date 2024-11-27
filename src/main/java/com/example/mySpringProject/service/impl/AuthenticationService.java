@@ -54,7 +54,7 @@ public class AuthenticationService {
     }
 
 
-    public AuthenticationResponse createUser(List<User> requests) {
+    public AuthenticationResponse createUser(List<User> requests, boolean isActive) {
         if (requests.isEmpty()) {
             throw new IllegalArgumentException("La liste des utilisateurs est vide.");
         }
@@ -64,8 +64,7 @@ public class AuthenticationService {
                 throw new IllegalArgumentException("L'adresse email " + request.getEmail() + " existe déjà.");
             }
 
-            Region region =  regionRepository.findById(request.getRegion().getId())
-                    .orElseThrow(() -> new RuntimeException("Region not found"));
+
             Province province = provinceRepository.findById(request.getProvince().getId())
                     .orElseThrow(() -> new RuntimeException("Province not found"));
 
@@ -76,30 +75,34 @@ public class AuthenticationService {
             user.setFirstName(request.getFirstName());
             user.setLastName(request.getLastName());
             user.setEmail(request.getEmail());
+            user.setActive(isActive);
+            user.setEtat("Pas activé");
             String encryptedPassword = passwordGenerator.encryptPassword(request.getPassword());
             user.setPassword(encryptedPassword);
             user.setRole(role);
             user.setOrganisme(request.getOrganisme());
-            user.setRegion(region);
             user.setProvince(province);
 
-            // Génération du jeton
+            repository.save(user);
+
             String token = jwtService.generateToken(user);
             tokens.add(token);
 
-            // Exemple de création d'un email dans votre service existant
             Email email = new Email();
             email.setRecipient(user.getEmail());
             email.setSubject("Informations sur votre compte");
 
             StringBuilder emailBody = new StringBuilder();
-            emailBody.append("Bonjour ").append(user.getRole().getRoleName()).append(",\n\n")
-                    .append("Nous sommes heureux de vous accueillir dans notre système.\n\n")
-                    .append("Voici vos informations de connexion :\n")
-                    .append("   - Adresse email : ").append(user.getEmail()).append("\n")
-                    .append("   - Mot de passe : ").append(request.getPassword()).append("\n\n")
-                    .append("Cordialement,\n")
-                    .append("L'équipe de support");
+            emailBody.append("<p>Bonjour ").append(user.getRole().getRoleName()).append(",</p>")
+                    .append("<p>Voici vos informations de connexion :</p>")
+                    .append("<ul>")
+                    .append("   <li>Adresse email : ").append(user.getEmail()).append("</li>")
+                    .append("   <li>Mot de passe : ").append(request.getPassword()).append("</li>")
+                    .append("</ul>")
+                    .append("<p><span style='color:red;'>NB: Votre compte est actuellement en attente de vérification par un administrateur.</span></p>")
+                    .append("<p><span style='color:red;'>NB: Nous vous informerons par e-mail dès que votre compte sera activé.</span></p>")
+                    .append("<p>Cordialement,</p>")
+                    .append("<p>L'équipe de support</p>");
 
             email.setBody(emailBody.toString());
 
@@ -141,6 +144,9 @@ public class AuthenticationService {
     public List<User> getAllAutoPorts() {
         return repository.getAllAutoPortUsers();
     }
+    public List<User> getAllDRE() {
+        return repository.getAllDREUsers();
+    }
 
     public User getUserById(int id) {
         return repository.findById (id);
@@ -155,12 +161,6 @@ public class AuthenticationService {
 
 
 
-
-//   // public List<User> getAllEnseignants() {
-//        return repository.getAllEnseignants();
-//    }
-
-
     public User updateUser(Integer id , User request) {
         User user= repository.findById(id).orElseThrow(
                 ()-> new ResourceNotFoundException("User with id " + id + " not found"));
@@ -168,9 +168,9 @@ public class AuthenticationService {
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setEmail(request.getEmail());
-        user.setOrganisme(request.getOrganisme());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRegion(request.getRegion());
+        user.setOrganisme(request.getOrganisme());
+      
         User updatedUser= repository.save(user);
 
         return updatedUser;
@@ -195,16 +195,90 @@ public class AuthenticationService {
         Optional<User> optionalUser = repository.findById(userId);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-
-            // Encrypter le nouveau mot de passe
             String encryptedPassword = passwordEncoder.encode(newPassword);
             user.setPassword(encryptedPassword);
-
-            // Enregistrement du nouvel utilisateur
             repository.save(user);
 
             return true;
         }
         return false;
+    }
+
+
+    public void deactivateUser(Integer userId) {
+        User user = repository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+
+        user.setActive(false);
+        user.setEtat("Pas activé");
+        repository.save(user);
+        sendDeactivationEmail(user);
+    }
+
+    private void sendDeactivationEmail(User user) {
+        Email email = new Email();
+        email.setRecipient(user.getEmail());
+        email.setSubject("Votre compte a été désactivé");
+
+        StringBuilder emailBody = new StringBuilder();
+        emailBody
+                .append("<p>Bonjour ").append(user.getFirstName()).append(" ").append(user.getLastName()).append(",</p>")
+                .append("<p>Nous souhaitons vous informer que votre compte a été désactivé.</p>")
+                .append("<p>Pour toute question, veuillez contacter le support.</p>")
+                .append("<p>Cordialement,<br/>")
+                .append("L'équipe de support</p>");
+
+
+        email.setBody(emailBody.toString());
+
+        String result = emailService.sendMail(email);
+        if (!result.equals("Email sent")) {
+            throw new RuntimeException("Une erreur s'est produite lors de l'envoi de l'e-mail.");
+        }
+    }
+
+
+    public void activateUser(Integer userId) {
+        User user = repository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+
+        if (user.isActive()) {
+            throw new RuntimeException("Le compte est déjà actif");
+        }
+
+        user.setActive(true);
+        user.setEtat("Activé");
+        repository.save(user);
+        sendActivationEmail(user);
+    }
+
+    private void sendActivationEmail(User user) {
+        Email email = new Email();
+        email.setRecipient(user.getEmail());
+        email.setSubject("Votre compte a été activé");
+
+        StringBuilder emailBody = new StringBuilder();
+        emailBody.append("<p>Bonjour ").append(user.getFirstName()).append(" ").append(user.getLastName()).append(",</p>")
+                .append("<p>Nous souhaitons vous informer que votre compte a été activé.</p>")
+                .append("<p>Vous pouvez maintenant vous connecter avec vos informations.</p>")
+                .append("<p>Cordialement,<br/>")
+                .append("L'équipe de support</p>");
+
+
+        email.setBody(emailBody.toString());
+
+        String result = emailService.sendMail(email);
+        if (!result.equals("Email sent")) {
+            throw new RuntimeException("Une erreur s'est produite lors de l'envoi de l'e-mail.");
+        }
+    }
+
+
+    public List<User> getAllInactiveUsers() {
+        return repository.findByActive(false);
+    }
+
+    public long getUserCount() {
+        return repository.count();
     }
 }

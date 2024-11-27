@@ -5,17 +5,18 @@ import com.example.mySpringProject.dto.PanneDto;
 import com.example.mySpringProject.model.Panne;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface PanneService {
 
-    PanneDto addPanne(PanneDto panne, Integer userId);
+    PanneDto addPanne(PanneDto panneDto, Integer userId, LocalDate startDate, LocalDate endDate);
     List<PanneDto> getAllPannes();
     Panne getPanneById(Integer id);
     Panne updatePanne(Integer id, Panne panne);
     Panne annoncerLaReparation(Integer id, Panne panne);
     void deletePanne(Integer id);
-    Panne validatePanne(Integer id, String emailDHOC);
+    Panne validatePanne(Integer id);
 
     void suivrePannes();
 
@@ -31,8 +32,14 @@ public interface PanneService {
 
     byte[] generatePanneReport(List<Panne> pannes);
 
+    List<Panne> getAllPannesPasTraitee();
     List<Panne> getAllPannesTraitee();
     List<Panne> getAllPannesArchivee();
+
+
+    long getPannesCount();
+
+    long getNonTraiteesCount();
 
 
 }

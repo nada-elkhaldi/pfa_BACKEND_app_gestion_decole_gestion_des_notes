@@ -48,11 +48,12 @@ public class FeuController {
 
     }
 
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @GetMapping("/feux/by-region-and-province")
-    public List<FeuDto> getFeuxByRegionAndProvince(
-            @RequestParam Integer idRegion,
+    public List<FeuDto> getFeuxByProvince(
+
             @RequestParam Integer idProvince) {
-        return feuService.getFeuxByRegionAndProvince(idRegion, idProvince);
+        return feuService.getFeuxByProvince( idProvince);
     }
 
 }

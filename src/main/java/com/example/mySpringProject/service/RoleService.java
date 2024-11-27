@@ -12,4 +12,7 @@ public interface RoleService {
     Role addPrivilegesToRole(Integer roleId, List<Integer> privilegeIds);
 
      List<Role> getAllRoles();
+
+     Role updateRole(Role role, Integer id);
+     void deleteRole(Integer roleId);
 }

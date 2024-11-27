@@ -36,16 +36,15 @@ public class Feu {
     private String etatFonctionnement;
     private String port;
     private String zone;
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "idRegion")
-    private Region region;
+
 
     @ManyToOne(optional = true)
     @JoinColumn(name = "idProvince")
     private Province province;
 
+  //  private Integer idRegion;
     public Feu(){}
-    public Feu(Integer id, String numero, String nomLocalisation, String position, String caracteristiques, String elevation, String portee, String description, String infos,String etatFonctionnement, String port, String zone, Region region, Province province)  {
+    public Feu(Integer id, String numero, String nomLocalisation, String position, String caracteristiques, String elevation, String portee, String description, String infos,String etatFonctionnement, String port, String zone, Province province)  {
         this.id = id;
         this.numero = numero;
         this.nomLocalisation = nomLocalisation;
@@ -58,7 +57,7 @@ public class Feu {
         this.etatFonctionnement= etatFonctionnement;
         this.port = port;
         this.zone = zone;
-        this.region = region;
+       // this.idRegion = idRegion;
         this.province = province;
     }
 

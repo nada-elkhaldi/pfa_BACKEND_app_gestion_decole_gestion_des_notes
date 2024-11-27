@@ -20,9 +20,14 @@ public class Province {
 
     private String nomProvince;
 
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "idRegion")
+    private Region region;
+
     public Province() {}
-    public Province(int id, String nomProvince) {
+    public Province(int id, String nomProvince, Region region) {
         this.id = id;
         this.nomProvince = nomProvince;
+        this.region = region;
     }
 }

@@ -24,14 +24,12 @@ public class EmailService {
         try {
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
-
-            // Utilisez l'adresse email spécifiée dans Email ou l'adresse par défaut
             String sender = email.getFrom() != null && !email.getFrom().isEmpty() ? email.getFrom() : defaultSender;
             System.out.println("Sender email: " + sender);
-            helper.setFrom(sender);
+            helper.setFrom("SGSM-DPDPM 2024<" + sender + ">");
             helper.setTo(email.getRecipient());
             helper.setSubject(email.getSubject());
-            helper.setText(email.getBody());
+            helper.setText(email.getBody(), true);
 
             javaMailSender.send(message);
 

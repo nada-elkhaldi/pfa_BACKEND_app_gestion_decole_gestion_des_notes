@@ -4,6 +4,7 @@ package com.example.mySpringProject.controller;
 import com.example.mySpringProject.dto.CreditDto;
 import com.example.mySpringProject.model.Credit;
 import com.example.mySpringProject.model.HistoriqueCredit;
+
 import com.example.mySpringProject.service.CreditService;
 import com.example.mySpringProject.service.HistoriqueCreditService;
 import lombok.AllArgsConstructor;
@@ -22,6 +23,12 @@ public class CreditController {
 
     private HistoriqueCreditService historiqueCreditService;
 
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+    @PostMapping("/demander-un-credit-panne")
+    public ResponseEntity<CreditDto> demanderCreditPanne(@RequestBody CreditDto creditDto) {
+        CreditDto savedCredit = creditService.demanderCreditPanne(creditDto);
+        return new ResponseEntity<>(savedCredit, HttpStatus.CREATED);
+    }
     @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @PostMapping("/demander-un-credit")
     public ResponseEntity<CreditDto> demanderCredit(@RequestBody CreditDto creditDto) {
@@ -63,5 +70,24 @@ public class CreditController {
     public ResponseEntity<List<HistoriqueCredit>> allCredits() {
         List<HistoriqueCredit> credits = historiqueCreditService.getAllHistoriqueCredit();
         return new ResponseEntity<>(credits, HttpStatus.OK);
+    }
+
+
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+    @GetMapping("/credits/user/{userId}")
+    public List<Credit> getCreditsByUsers(@PathVariable Integer userId ) {
+        return creditService.findCreditsByUserId(userId);
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+    @GetMapping("/total-montant-demande")
+    public Double getTotalMontantDemande() {
+        return creditService.getTotalMontantDemande();
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+    @GetMapping("/total-credit-delegue")
+    public Double getTotalCreditDelegue() {
+        return historiqueCreditService.getTotalCreditDelegue();
     }
 }

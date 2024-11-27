@@ -5,10 +5,9 @@ import com.example.mySpringProject.exception.ResourceNotFoundException;
 import com.example.mySpringProject.mapper.FeuMapper;
 import com.example.mySpringProject.model.Feu;
 import com.example.mySpringProject.model.Province;
-import com.example.mySpringProject.model.Region;
+
 import com.example.mySpringProject.repository.FeuRepository;
 import com.example.mySpringProject.repository.ProvinceRepository;
-import com.example.mySpringProject.repository.RegionRepository;
 import com.example.mySpringProject.service.FeuService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +20,7 @@ import java.util.stream.Collectors;
 public class FeuServiceImpl implements FeuService {
 
 
-    private final RegionRepository regionRepository;
+
     private final ProvinceRepository provinceRepository;
     private FeuRepository feuRepository;
     private FeuMapper feuMapper;
@@ -29,13 +28,13 @@ public class FeuServiceImpl implements FeuService {
     public FeuDto addFeu(FeuDto feuDto) {
 
         Feu feu = FeuMapper.mapToFeu(feuDto);
-        Region region = regionRepository.findById(feuDto.getIdRegion())
-                .orElseThrow(() -> new RuntimeException("Region not found"));
+
         Province province = provinceRepository.findById(feuDto.getIdProvince())
                 .orElseThrow(() -> new RuntimeException("Province not found"));
 
-        feu.setRegion(region);
+
         feu.setProvince(province);
+      //  feu.setIdRegion(feuDto.getProvince().getRegion().getId());
 
         Feu savedFeu = feuRepository.save(feu);
         return FeuMapper.mapToFeuDto(savedFeu);
@@ -58,7 +57,7 @@ public class FeuServiceImpl implements FeuService {
     @Override
     public Feu updateFeu(Integer id, Feu request) {
         Feu feu = feuRepository.findById(id).orElseThrow(
-                ()-> new ResourceNotFoundException("Region with id " + id + " not found")
+                ()-> new ResourceNotFoundException("Feu with id " + id + " not found")
         );
         feu.setNumero(request.getNumero());
         feu.setNomLocalisation(request.getNomLocalisation());
@@ -84,8 +83,8 @@ public class FeuServiceImpl implements FeuService {
     }
 
     @Override
-    public List<FeuDto> getFeuxByRegionAndProvince(Integer idRegion, Integer idProvince) {
-        List<Feu> feux = feuRepository.findByRegionIdAndProvinceId(idRegion, idProvince);
+    public List<FeuDto> getFeuxByProvince( Integer idProvince) {
+        List<Feu> feux = feuRepository.findByProvinceId( idProvince);
         return feux.stream()
                 .map(FeuMapper::mapToFeuDto)
                 .collect(Collectors.toList());

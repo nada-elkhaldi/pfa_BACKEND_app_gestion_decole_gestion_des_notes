@@ -42,9 +42,15 @@ public class User implements UserDetails {
     @Column(name="password")
     private String password;
 
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "idRegion")
-    private Region region;
+
+    @Column(name = "active")
+    private boolean active;
+
+    @Column(name = "etat")
+    private String etat;
+
+
+
 
     @ManyToOne(optional = true)
     @JoinColumn(name = "idProvince")
@@ -58,7 +64,7 @@ public class User implements UserDetails {
 
 
 
-    public User(Integer id, String firstName, String lastName, String email, String organisme, String password, Role role, Region region, Province province) {
+    public User(Integer id, String firstName, String lastName, String email, String organisme, String password, Role role, Province province) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -66,7 +72,7 @@ public class User implements UserDetails {
         this.organisme = organisme;
         this.password = password;
         this.role = role;
-        this.region = region;
+
         this.province = province;
     }
 
@@ -109,7 +115,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return active;
     }
 
 
